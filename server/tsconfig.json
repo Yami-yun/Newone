@@ -2,7 +2,9 @@
     "compilerOptions": {
         "target": "ES6",
         "module": "CommonJS",
-        "outDir": "./dist"
+        "outDir": "./dist",
+        "moduleResolution": "node",
+        // "baseUrl": "",
     },
     "exclude": ["node_modules"],
 
