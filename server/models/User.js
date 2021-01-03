@@ -78,7 +78,7 @@ userSchema.methods.generateToken = function(cb){
 
     user.tokenExp = halfDay;
     user.token = token;
-    // token, exp db에 저장
+    // token, exp db에 저장 
     user.save(function(err, user){
         console.log(err);
         if(err) return cb(err);
@@ -87,7 +87,32 @@ userSchema.methods.generateToken = function(cb){
 
 
 }
+// userSchema.statics.findByToken = function (token, cb) {
+//     var user = this;
 
+//     jwt.verify(token, 'secret', function (err, decode) {
+//         user.findOne({ "_id": decode, "token": token }, function (err, user) {
+//             if (err) return cb(err);
+//             cb(null, user);
+//         })
+//     })
+// }
+
+userSchema.statics.findByToken = function(token, cb){
+    const user = this;
+    // client에서 받은 token을 디코딩한다.
+    jsonwebtoken.verify(token, 'secret', function(err, decode){
+        // 디코딩 된 토큰값이 db에서 일치하는 토큰 값이 있는지 확인한다.
+        user.findOne({"_id": decode, "token": token}, function (err, user){
+            if(err) return cb(err);
+
+            console.log(`Auth return model : ${user}`);
+
+            // 찾은 결과 db값을 cb로 보낸다.
+            cb(null, user);
+        });
+    });
+}
 
 const User = mongoose.model('User', userSchema);
 

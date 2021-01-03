@@ -1,6 +1,7 @@
 const express = require("express");
 const app = express();
 const bodyParser = require("body-parser");
+const cookieParser = require('cookie-parser');
 // app.use(express.json());
 
 
@@ -13,6 +14,7 @@ const connect= mongoose.connect("mongodb+srv://yunyami:1234@cluster0.s4kox.mongo
 .catch(err=> console.log(err));
 
 app.use(bodyParser.json());
+app.use(cookieParser());
 
 app.get('/', function(req, res) {
     res.send('hello world2222');
