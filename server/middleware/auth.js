@@ -4,7 +4,8 @@ const { User } = require('../models/User');
 const auth = (req, res, next) => {
 
     let token = req.cookies.w_auth;
-    
+
+    console.log(`[SERVER] [AUTH MIDDLEWARE] path: ${req.route.path}, CLIENT TOKEN: ${JSON.stringify(token)} `);
 
     User.findByToken(token, (err, user) => {
         if(err) throw err;
@@ -17,13 +18,10 @@ const auth = (req, res, next) => {
             })
         }
             // token을 찾았으면
-        console.log("Client Request : ");
-        console.log(token);
-        // console.log(user);
+        console.log(`[SERVER] [AUTH MIDDLEWARE] path: ${req.route.path}, RESULT: TOKEN FIND!!! `);
         req.token = token;
         req.user = user;
         next();
-        console.log(req.user);
     });
 
 };

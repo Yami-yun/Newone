@@ -26,15 +26,36 @@ const userSchema = mongoose.Schema({
         type:Number,
         default: 0 
     },
-    image: {                        // 등록된 자신 이미지의 주소, 정보를 담는 배열, 미정
-        type:Array,
-        default:[],
+    // photo: {                        // 등록된 자신 이미지의 주소, 정보를 담는 배열, 미정
+    //     type:Array,
+    //     default:[],
+    // },
+    photo:[new mongoose.Schema({path: String, name: String, type: Number})],            // 자신이 창작한 작품 이미지 db
+    personalImgName: {
+        type:String,
+        default: "",
+    },
+    personalImgPath:{
+        type:String,
+        default: "",
+    },
+    upperImgName: {
+        type:String,
+        default: "",
+    },
+    upperImgPath:{
+        type:String,
+        default: "",
     },
     token : {
         type: String,
     },
     tokenExp :{
         type: Number
+    },
+    instruction:{
+        type: String,
+        default: "",
     }
 })
 
