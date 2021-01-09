@@ -3,17 +3,21 @@ const router = express.Router();
 const multer = require('multer');
 const { User } = require("../models/User");
 const { auth } = require("../middleware/auth");
+const { authorNameUnique } = require("../middleware/userMiddleware");
 const fs = require('fs');
-const { json } = require('body-parser');
-// const async = require('async');
+
 
 // 회원가입 api
 router.post("/register", (req, res) => {
+
+    req.body = {...req.body, key:Date.now() *123};
+    console.log(req.body)
     const user = new User(req.body);
+
     
 
     user.save((err, doc)=>{
-        if(err) return res.json({ success: false, err });
+        if(err) return res.json({ success: false, err: err.keyPattern });
         console.log(`[SERVER] [USER ROUTER] [REGISTER POST] path: ${req.route.path}, Body: ${JSON.stringify(req.body)} `);
 
         return res.status(200).json({
@@ -32,6 +36,14 @@ router.get("/auth", auth, (req, res) => {
         authorName: req.user.authorName,
         photoData: req.user.photo,
         personalImg: req.user.personalImg,
+        personalImgName: req.user.personalImgName,
+        personalImgPath: req.user.personalImgPath,
+        upperImgName: req.user.upperImgName,
+        upperImgPath: req.user.upperImgPath,
+        instruction: req.user.instruction,
+        homepage: req.user.homepage,
+        twitter: req.user.twitter,
+        key: req.user.key,
 
         // role: req.user.role,
     });
@@ -54,6 +66,7 @@ router.post("/login", (req, res) => {
     User.findOne({ email: req.body.email }, (err, user) => {
         console.log(`[SERVER] [USER ROUTER] [LOGIN POST] path: ${req.route.path}, Find Model: ${JSON.stringify(user)} `);
         if(!user){
+            console.log("test11111111111111111111111111111111111111111111111111111111111111111");
             return res.json({
                 success: false,
                 message: "등록된 이메일이 아닙니다."
@@ -61,8 +74,9 @@ router.post("/login", (req, res) => {
         }
 
         user.comparePassword(req.body.password, (err, isMatch)=>{
-            console.log("test1");
+            console.log("test222222222222222222222222222222222222222222222222222222222222");
             if (!isMatch) {
+                console.log("test333333333333333333333333333333333333333333333");
                 return res.json({
                 success: false,
                 message: "비밀번호가 일치하지 않습니다.",});
@@ -70,6 +84,7 @@ router.post("/login", (req, res) => {
 
             user.generateToken((err, user) => {
                 // client에 200, cooke에 token, exp 저장
+                console.log("test4444444444444444444444444444444444444444444");
                 if (err) return res.status(400).send(err);
                 
                 // res 에 쿠키 정보 저장
@@ -148,47 +163,98 @@ router.post('/modified_personal_img', auth , (req, res) => {
     
 });
 
-router.get('/info', auth, (req, res) => {
-
-    console.log("###########################test");
-    console.log(req.user);
-    // User.findOne({id:req.user._id}, (err, doc)=>{
-        
-    // } )
-});
-
 const UPPER_PHOTO_BASE_PATH = `uploads/user/upper/`;
 const PERSONAL_PHOTO_BASE_PATH = `uploads/user/personal/`;
-router.patch('/modified_personal_info', auth, (req, res)=>{
+router.patch('/modified_personal_info', auth, authorNameUnique, (req, res)=>{
     console.log(`[SERVER] [USERS ROUTER] [MODIFIED PERSONAL INFO PATCH] path: ${req?.route?.path}, REQUEST DATA: ${JSON.stringify(req?.body)} `);
 
-    //  이미지 파일이 있다면 photo 폴더로 이동
-    fs.rename(req?.body?.upperPhoto?.path, UPPER_PHOTO_BASE_PATH+req?.body?.upperPhoto?.name, function(err){
-        if(err) return res.json({ success:false, err, });
+    if(fs.existsSync(req?.body?.upperPhoto?.path)){
+        // 임시 폴더에 파일이 있을 경우( === 즉 사용자가, 이미지를 변경한 경우), 서버.user.upper 폴더로 이동
 
-        fs.rename(req?.body?.personalPhoto?.path, PERSONAL_PHOTO_BASE_PATH+req?.body?.personalPhoto?.name, function(err){
-            req.body = {...req.body, photoPath: `uploads\\photo\\${req.body.photoName}`};
+        fs.rename(req?.body?.upperPhoto?.path, UPPER_PHOTO_BASE_PATH+req?.body?.upperPhoto?.name, function(err){
+            if(err) return res.json({ success:false, err, });
 
-            // user 에 img id, path, name 저장
-            User.findOneAndUpdate(
-                { _id:req.user._id}, 
-                {
-                    personalImgName: req.body.personalPhoto.name,
-                    personalImgPath: req.body.personalPhoto.path,
-                    upperImgName: req.body.upperPhoto.name,
-                    upperImgPath: req.body.upperPhoto.path,
-                    instruction: req.body.instruction,
-                    authorName: req.body.authorName,
-                },
-                (err, res)=>{
-                if(err) return res.json({ success:false, err});
-            });
+            // 기존 이미지 제거
+            fs.unlink(req.user.upperImgPath, ()=>{});
         });
+    }
 
+    if(fs.existsSync(req?.body?.personalPhoto?.path)){
 
-        
-        return res.status(200).json({ success:true });
-    })
+        // 임시 폴더에 파일이 있을 경우( === 즉 사용자가, 이미지를 변경한 경우), 서버.user.personal 폴더로 이동
+        fs.rename(req?.body?.personalPhoto?.path, PERSONAL_PHOTO_BASE_PATH+req?.body?.personalPhoto?.name, function(err){
+            if(err) return res.json({ success:false, err, });
+
+            // 기존 이미지 제거
+            fs.unlink(req.user.personalImgPath, ()=>{});
+        });
+    }
+
+    req.body = {
+        ...req.body, 
+        upperPhoto: {...req.body.upperPhoto, path :`uploads\\user\\upper\\${req.body.upperPhoto.name}`}, 
+        personalPhoto: {...req.body.personalPhoto, path :`uploads\\user\\personal\\${req.body.personalPhoto.name}`} 
+    };
+
+    req.body = {...req.body, photoPath: `uploads\\photo\\${req.body.photoName}`};
+    User.findOneAndUpdate(
+        { _id:req.user._id}, 
+        {
+            personalImgName: req.body.personalPhoto.name,
+            personalImgPath: req.body.personalPhoto.path,
+            upperImgName: req.body.upperPhoto.name,
+            upperImgPath: req.body.upperPhoto.path,
+            instruction: req.body.instruction,
+            authorName: req.body.authorName,
+            homepage: req.body.homepage,
+            twitter: req.body.twitter,
+        },
+        (err)=>{
+            if(err) return res.json({ success:false, err:err.keyPattern});
+
+            return res.json({
+                success: true,
+            });
+        }
+    );
+    
+
+});
+
+router.post('/get_personal_info', (req, res)=>{
+
+    console.log(req.body.key);
+    
+    User.findOne({key: req.body.key}, (err, doc)=>{
+
+        if(err) {
+            console.log(`[SERVER] [USERS ROUTER] [GET PERSONAL INFO POST] path: ${req?.route?.path}, ERR DATA: ${JSON.stringify(err)} `);
+            return res.json({success: false, err});
+        };
+
+        if(!doc){
+            console.log(`[SERVER] [USERS ROUTER] [GET PERSONAL INFO POST] path: ${req?.route?.path}, NO FIND DATA `);
+            return res.json({success: false});
+        }
+
+        console.log(`[SERVER] [USERS ROUTER] [GET PERSONAL INFO POST] path: ${req?.route?.path}, RESULT DATA: ${JSON.stringify(doc)} `);
+
+        return res.json({
+            success:true, 
+            result: { 
+                personalImgName : doc.personalImgName,
+                personalImgPath : doc.personalImgPath,
+                upperImgName : doc.upperImgName,
+                upperImgPath : doc.upperImgPath,
+                instruction : doc.instruction,
+                twitter : doc.twitter,
+                homepage : doc.homepage,
+                email : doc.email,
+                authorName : doc.authorName,
+                key : doc.key,
+                photo : doc.photo,
+            } });
+    });
 });
 
 

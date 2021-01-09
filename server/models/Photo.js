@@ -24,6 +24,21 @@ const photoSchema = mongoose.Schema({
         type: Number,
         default: 0,
     },
+    createDate:{
+        type: Date,
+        default: Date.now,
+    },
+    new:{
+        type:Array,
+        default: [],
+    },
+    authorName:{
+        type:String,
+    },
+    authorKey:{
+        type:Number,
+    },
+
 });
 
 

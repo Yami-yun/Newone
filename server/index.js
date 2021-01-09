@@ -26,6 +26,7 @@ app.get('/', function(req, res) {
 app.use('/api/users', require('./routes/users'));;
 
 app.use('/api/photo', require('./routes/photo'));
+app.use('/api/config', require('./routes/config'));
 app.use('/uploads', express.static('uploads'));
 // 5000 번 포트에 연결
 app.listen(5000);

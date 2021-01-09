@@ -5,6 +5,11 @@ const saltRounds = 10;
 const moment = require("moment");
 
 const userSchema = mongoose.Schema({
+    key:{
+        type: Number,
+        required: true,
+        unique: true,
+    },
     email: {
         type:String,
         required: true,     // 필수
@@ -21,6 +26,7 @@ const userSchema = mongoose.Schema({
         type:String,
         maxlength: 50,
         minlength: 2,
+        unique: true,
     },
     role : {
         type:Number,
@@ -30,7 +36,7 @@ const userSchema = mongoose.Schema({
     //     type:Array,
     //     default:[],
     // },
-    photo:[new mongoose.Schema({path: String, name: String, type: Number})],            // 자신이 창작한 작품 이미지 db
+    photo:[new mongoose.Schema({path: String, name: String, type: Number, id: String})],            // 자신이 창작한 작품 이미지 db
     personalImgName: {
         type:String,
         default: "",
@@ -56,7 +62,15 @@ const userSchema = mongoose.Schema({
     instruction:{
         type: String,
         default: "",
-    }
+    },
+    twitter:{
+        type: String,
+        default: "",
+    },
+    homepage:{
+        type: String,
+        default: "",
+    },
 })
 
 // user 모델 db에 데이터 입력 전, 실행
