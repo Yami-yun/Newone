@@ -221,10 +221,19 @@ router.patch('/modified_personal_info', auth, authorNameUnique, (req, res)=>{
 
 });
 
-router.post('/get_personal_info', (req, res)=>{
-
-    console.log(req.body.key);
+router.post('/get_personal_info', auth, (req, res)=>{
     
+    let isUser = (parseInt(req.body.key) === req.user.key);
+    // 해당 본인 페이지라면
+    console.log("################################################");
+    console.log(typeof req.body.key);
+    console.log(typeof req.user.key);
+    // isUser = (req.body.key === req.user.key);
+    // if(req.body.key === req.user.key){
+    //     isUser =true;
+    // else isUser = false;
+
+    console.log(isUser);
     User.findOne({key: req.body.key}, (err, doc)=>{
 
         if(err) {
@@ -253,7 +262,58 @@ router.post('/get_personal_info', (req, res)=>{
                 authorName : doc.authorName,
                 key : doc.key,
                 photo : doc.photo,
+                isUser : isUser,
+                follow : doc.follow,
+                follower : doc.follower,
             } });
+    });
+});
+
+router.post('/follow', auth, (req, res)=>{
+    
+    console.log(`[SERVER] [USERS ROUTER] [FOLLOW POST] path: ${req?.route?.path}, RESULT DATA: ${JSON.stringify(req.body.key)} `);
+    console.log(`[SERVER] [USERS ROUTER] [FOLLOW POST] path: ${req?.route?.path}, RESULT DATA: ${JSON.stringify(req.user.key)} `);
+
+
+    // follow 할경우
+    if(req.body.follow){
+        // 해당 작품의 작가의 팔로워 추가
+        User.findOneAndUpdate({key: req.body.key}, {$push: {follower: req.user.key} }, (err, doc)=>{
+            if(err) return res.json({success: false, err});
+            // return res.json({success: true});
+        });
+
+        // 유저의 팔로우 추가
+        User.findOneAndUpdate({key: req.user.key}, {$push: {follow: req.body.key} }, (err, doc)=>{
+            if(err) return res.json({success: false, err});
+            return res.json({success: true});
+        });
+
+    }else{
+        // follow 취소할 경우
+        // 해당 작품의 작가의 팔로워 추가
+        User.findOneAndUpdate({key: req.body.key}, {$pull: {follower: req.user.key} }, (err, doc)=>{
+            if(err) return res.json({success: false, err});
+        });
+
+        // 유저의 팔로우 추가
+        User.findOneAndUpdate({key: req.user.key}, {$pull: {follow: req.body.key} }, (err, doc)=>{
+            if(err) return res.json({success: false, err});
+            return res.json({success: true});
+        });
+    }
+
+    
+});
+
+router.post('/is_follow', auth, (req,res) => {
+
+    User.findOne({key: req.user.key}, (err, doc)=>{
+        if(err) return res.json({success: false, err});
+
+        const result = doc.follow.includes(req.body.key);
+        return res.json({success: true, result,});
+
     });
 });
 

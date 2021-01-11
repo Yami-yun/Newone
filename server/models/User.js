@@ -71,6 +71,18 @@ const userSchema = mongoose.Schema({
         type: String,
         default: "",
     },
+    alarm:{
+        type: Array,
+        default: [],
+    },
+    follow:{
+        type: Array,
+        default: [],
+    },
+    follower:{
+        type: Array,
+        default: [],
+    },
 })
 
 // user 모델 db에 데이터 입력 전, 실행

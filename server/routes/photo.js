@@ -24,14 +24,6 @@ const upload = multer({ storage: storage }).single("file");
 // 사용자가 로컬에서 불러온 이미지를 임시 저장한다.
 router.post("/upload", (req, res)=>{
 
-    console.log("##################################################");
-    console.log("##################################################");
-    console.log("##################################################");
-    console.log("##################################################");
-    console.log("####################TEST$$$$$#####################");
-    console.log(req.body);
-    
-    // console.log(req);
     //가져온 이미지를 저장을 해주면 된다.
     upload(req, res, err => {
         if (err) {
@@ -44,6 +36,7 @@ router.post("/upload", (req, res)=>{
 
 });
 
+// 임시 포토 파일 삭제
 router.delete("/tmp_photo_delete", (req, res)=>{
     
     console.log(`[SERVER] [PHOTO ROUTER] [TMP PHOTO DELETE DELETE] path: ${req?.route?.path}, REQUEST DATA: ${JSON.stringify(req?.body)} `);
@@ -59,8 +52,6 @@ const PHOTO_BASE_PATH = `uploads/photo/`;
 router.post("/add", auth, (req,res) => {
 
     console.log(`[SERVER] [PHOTO ROUTER] [ADD POST] path: ${req?.route?.path}, REQUEST DATA: ${JSON.stringify(req?.body)} `);
-    // console.log(req);
-
 
     // 서버 임시 tmp(임시) 폴더에 이미지 파일 이 있는지
     fs.stat(req?.body?.photoPath, function(err){
@@ -74,12 +65,8 @@ router.post("/add", auth, (req,res) => {
                     authorName: req.user.authorName,
                     authorKey: req.user.key,
                 };
-                console.log("#################################################################");
-                console.log("#################################################################");
-                console.log("##########################TEST############################");
-                console.log(req.user);
+
                 const photoModel = new PhotoModel(req.body);
-                
                 // photo db 저장
                 photoModel.save((err, doc)=>{
                     if(err) return res.json({ success:false, err});
@@ -102,21 +89,16 @@ router.post("/add", auth, (req,res) => {
                     if(err) return res.json({ success:false, err});
                 });
 
-
-                
                 return res.json({ success:true });
             })
-            
         }else{
             console.log("############### No Find");
             return res.status(200),json({ success: true });
         }
-        
     });
-    
 });
 
-
+//db에서 해당 페이지 포토 정보 가져오기
 router.post('/get_photo_info', (req, res)=> {
     console.log(`[SERVER] [PHOTO ROUTER] [GET_PHOTO_INFO POST] path: ${req.route.path}, RESULT: ${JSON.stringify(req.body)} `);
     PhotoModel.findOne({_id:req.body.photoId }, (err, doc)=>{
@@ -128,6 +110,7 @@ router.post('/get_photo_info', (req, res)=> {
 
 });
 
+//db에서 작가 정보 가져오기
 router.post('/get_author_info', (req, res)=> {
     console.log(`[SERVER] [PHOTO ROUTER] [GET_AUTHOR_INFO POST] path: ${req.route.path}, BODY: ${JSON.stringify(req.body)} `);
     // console.log(req.body);
@@ -143,11 +126,9 @@ router.post('/get_author_info', (req, res)=> {
             photo: doc.photo,
         }});
     });
-
-
-    
 });
 
+// db에서 포토 데이터 삭제
 router.delete('/delete', auth, (req, res)=>{
 
     console.log(`[SERVER] [PHOTO ROUTER] [PHOTO_DELETE DELETE] path: ${req.route.path}, BODY: ${JSON.stringify(req.body)} `);
@@ -169,9 +150,9 @@ router.delete('/delete', auth, (req, res)=>{
         return res.json({success:true})
         // console.log(res);
     });
-
 });
 
+// user db에서 해당 포토 데이터를 포토 변경 페이지에서 변경한 데이터로 수정
 router.patch('/modify', auth, (req, res) =>{
     console.log(`[SERVER] [PHOTO ROUTER] [PHOTO_MODIFY PATCH] path: ${req.route.path}, BODY: ${JSON.stringify(req.body)} `);
 
@@ -189,8 +170,6 @@ router.patch('/modify', auth, (req, res) =>{
     // user db에서 해당 포토 데이터 변경
     User.findOneAndUpdate({_id:req.user._id}, {photo: userPhotoData}, (err, doc, any)=>{
         if(err) return res.json({success: false, err});
-
-        // console.log(doc);
     });
     
     //해당 photo db 변경
@@ -204,7 +183,6 @@ router.patch('/modify', auth, (req, res) =>{
             photoType: modifyData.photoType,
         } ,(err, doc, res)=>{
         if(err) return res.json({success: false, err});
-        
     });
 
     // 이미지가 변경되었을 경우,
@@ -228,21 +206,14 @@ router.patch('/modify', auth, (req, res) =>{
 });
 
 router.patch('/new', auth, findPhotoModelById, (req, res)=>{
-    
     console.log(`[SERVER] [PHOTO ROUTER] [PHOTO NEW PATCH] path: ${req.route.path}, BODY: ${JSON.stringify(req.user.key)} `);
     console.log(`[SERVER] [PHOTO ROUTER] [PHOTO NEW PATCH] path: ${req.route.path}, BODY: ${JSON.stringify(req.body)} `);
     console.log(`[SERVER] [PHOTO ROUTER] [PHOTO NEW PATCH] path: ${req.route.path}, BODY: ${JSON.stringify(req.photo)} `);
-
-    // PhotoModel.find(req.body._id, (err, docs)=>{
-    //     console.log(docs);
-    // });
-    console.log(req.photo.new.indexOf(req.user.key));
 
     if(req.photo.new.indexOf(req.user.key) === -1){
         // 아직 New를 누르지 않았다.
         PhotoModel.findOneAndUpdate({_id: req.body._id}, {$push: {new: req.user.key}}, (err, data)=>{
             if(err) return res.json({success: false, err})
-
         });
 
     }else{
@@ -250,25 +221,14 @@ router.patch('/new', auth, findPhotoModelById, (req, res)=>{
         const tmp = req.photo.new.splice(req.photo.new.indexOf(req.user.key),1);
         PhotoModel.findOneAndUpdate({_id: req.body._id}, {new: req.photo.new}, (err, data)=>{
             if(err) return res.json({success: false, err})
-
         });
-        
-
     }
-    // PhotoModel.findOneAndUpdate({_id: req.body._id}, {$push: {new: req.user.key}}, (err, data)=>{
-    //     console.log(err);
-    //     console.log(data);
-    // });
-    // console.log(req.user.key);
-
 
     return res.json({success:true});
 });
 
 // 포토 화면에 들어갈 시, 사용자가 해당 이미지에 대한 New를 눌렀는지 확인함
 router.post('/is_new', auth, findPhotoModelById, (req, res)=>{
-    
-
     // photo db의 new 배열에 user key가 있으면 => 사용자가 해당 이미지에 이전에 New를 눌렀음 
     const result = req.photo?.new.indexOf(req.user.key) !== -1;
     console.log(`[SERVER] [PHOTO ROUTER] [PHOTO IS NEW PATCH] path: ${req.route.path}, BODY : ${JSON.stringify(req.body)} `);
@@ -277,5 +237,39 @@ router.post('/is_new', auth, findPhotoModelById, (req, res)=>{
     return res.json({success:true, result});
 });
 
+router.get('/get_recommend_photo', (req, res)=>{
+    console.log(`[SERVER] [PHOTO ROUTER] [RECOMMEND PHOTO GET] path: ${req.route.path}, BODY : ${JSON.stringify(req.query.tagList)} `);
+    
+    // 해당 페이지 작품에 있는 모든 테그와 관련된 작품을 추출한다.
+    PhotoModel.find({"tagList": {$all: req.query.tagList}}, (err, doc)=>{
+        if(err) return res.json({success:false, err});
+        return res.json({success:true, result: doc});
+    }).limit(8);
+});
+
+
+
+router.get('/get_today_lank', (req, res)=>{
+    // const today = moment().startOf('day');
+    PhotoModel.find({createDate :{$search:'2021-01-11'}}, (err, doc)=>{
+        if(err) return res.json({success:false, err});
+        console.log("##################################");
+        console.log(doc);
+        return res.json({success:true, result: doc});
+    })
+    .sort({ createDate : -1 })
+    .limit(20);
+});
+
+
+
+router.get('/get_recent_photo', (req, res)=>{
+    PhotoModel.find((err, doc)=>{
+        if(err) return res.json({success:false, err});
+        return res.json({success:true, result: doc});
+    })
+    .sort({ new: -1 })
+    .limit(100);
+});
 
 module.exports = router;
