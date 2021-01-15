@@ -2,8 +2,8 @@ const express = require('express');
 const router = express.Router();
 const { CommentModel } = require('../models/Comment');
 const { auth } = require('../middleware/auth');
-const { Model } = require('mongoose');
 
+// comment add api
 router.post("/add", auth, (req, res)=>{
     console.log(`[SERVER] [COMMENT ROUTER] [COMMENT ADD POST] path: ${req.route.path}, BODY : ${JSON.stringify(req.body)} `);
     console.log(`[SERVER] [COMMENT ROUTER] [COMMENT ADD POST] path: ${req.route.path}, BODY : ${JSON.stringify(req.user)} `);
@@ -24,13 +24,10 @@ router.post("/add", auth, (req, res)=>{
     });
 });
 
+// 현재 페이지 작품에 달린 comment db 정보 가져옴
 router.get("/get", (req, res)=>{
-    console.log("##################################################");
-    console.log("##################################################");
-    console.log("##################################################");
     console.log(`[SERVER] [COMMENTe233 ROUTER] [COMMENT GET POST] path: ${req.route.path}, BODY : ${JSON.stringify(req.query._id)} `);
-    // console.log(`[SERVER] [COMMENT ROUTER] [COMMENT ADD POST] path: ${req.route.path}, RESULT : ${JSON.stringify(req)}`);
-    
+
     CommentModel.find((err, docs)=>{
         if(err) return res.json({success: false, err});
         return res.json({success: true, result: docs});
@@ -41,7 +38,7 @@ router.get("/get", (req, res)=>{
 
 });
 
-
+// comment 삭제 api
 router.delete("/delete", auth, (req, res)=>{
     console.log(`[SERVER] [COMMENT ROUTER] [COMMENT DELETE POST] path: ${req.route.path}, BODY : ${JSON.stringify(req.body)} `);
     console.log(`[SERVER] [COMMENT ROUTER] [COMMENT DELETE POST] path: ${req.route.path}, USER : ${JSON.stringify(req.user)} `);
@@ -51,6 +48,7 @@ router.delete("/delete", auth, (req, res)=>{
         // db에서 찾아서 제거
         CommentModel.findOneAndDelete({_id: req.body._id}, (err, doc)=>{
             if(err) return res.json({success: false, err}); 
+
             return res.json({success: true, result: req.body._id});
         });
     }else{
@@ -60,7 +58,7 @@ router.delete("/delete", auth, (req, res)=>{
 
 });
 
-
+// comment 변경 api
 router.patch("/modify", auth, (req, res)=>{
     console.log(`[SERVER] [COMMENT ROUTER] [COMMENT MODIFY POST] path: ${req.route.path}, BODY : ${JSON.stringify(req.body)} `);
     console.log(`[SERVER] [COMMENT ROUTER] [COMMENT MODIFY POST] path: ${req.route.path}, USER : ${JSON.stringify(req.user)} `);
@@ -75,7 +73,6 @@ router.patch("/modify", auth, (req, res)=>{
     }else{
         return res.json({success: false});
     }
-
 });
 
 

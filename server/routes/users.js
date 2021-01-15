@@ -6,16 +6,13 @@ const { auth } = require("../middleware/auth");
 const { authorNameUnique } = require("../middleware/userMiddleware");
 const fs = require('fs');
 
-
 // 회원가입 api
 router.post("/register", (req, res) => {
 
     req.body = {...req.body, key:Date.now() *123};
-    console.log(req.body)
     const user = new User(req.body);
 
-    
-
+    // 회원가입 정보를 user db에 저장
     user.save((err, doc)=>{
         if(err) return res.json({ success: false, err: err.keyPattern });
         console.log(`[SERVER] [USER ROUTER] [REGISTER POST] path: ${req.route.path}, Body: ${JSON.stringify(req.body)} `);
@@ -26,11 +23,9 @@ router.post("/register", (req, res) => {
     });
 });
 
-// 
+// 페이지 이동 시, 접근 권환 확인 api
 router.get("/auth", auth, (req, res) => {
     res.status(200).json({
-        // _id: req.user._id,
-        // isAdmin: req.user.role === 0 ? false : true,
         isAuth: true,
         email: req.user.email,
         authorName: req.user.authorName,
@@ -44,14 +39,14 @@ router.get("/auth", auth, (req, res) => {
         homepage: req.user.homepage,
         twitter: req.user.twitter,
         key: req.user.key,
-
-        // role: req.user.role,
     });
 });
 
 // logout api
 router.get("/logout", auth, (req, res) => {
     console.log(`[SERVER] [USER ROUTER] [LOGOUT GET] path: ${req.route.path}, Find Model: ${JSON.stringify(req.user)} `);
+
+    //db에서 토큰 초기화
     User.findOneAndUpdate( { _id:req.user._id}, {token:"", tokenExp: ""}, (err, doc) => {
         if(err) return res.json({success: false, err});
 
@@ -65,29 +60,27 @@ router.get("/logout", auth, (req, res) => {
 router.post("/login", (req, res) => {
     User.findOne({ email: req.body.email }, (err, user) => {
         console.log(`[SERVER] [USER ROUTER] [LOGIN POST] path: ${req.route.path}, Find Model: ${JSON.stringify(user)} `);
+        // 이메일 등록 여부 확인
         if(!user){
-            console.log("test11111111111111111111111111111111111111111111111111111111111111111");
             return res.json({
                 success: false,
                 message: "등록된 이메일이 아닙니다."
             });
         }
 
+        // 비밀번호 비교
         user.comparePassword(req.body.password, (err, isMatch)=>{
-            console.log("test222222222222222222222222222222222222222222222222222222222222");
             if (!isMatch) {
-                console.log("test333333333333333333333333333333333333333333333");
                 return res.json({
                 success: false,
                 message: "비밀번호가 일치하지 않습니다.",});
             }
 
+            // 토큰 생성
             user.generateToken((err, user) => {
-                // client에 200, cooke에 token, exp 저장
-                console.log("test4444444444444444444444444444444444444444444");
                 if (err) return res.status(400).send(err);
-                
-                // res 에 쿠키 정보 저장
+
+                //cooke에 token, exp 저장
                 res.cookie("w_authExp", user.tokenExp);
                 res.cookie("w_auth", user.token)
                 .status(200)
@@ -95,7 +88,6 @@ router.post("/login", (req, res) => {
                     success: true, userId: user._id
                 });
             });
-
         });
     });
 });
@@ -116,7 +108,6 @@ router.post('/modified_personal_img', auth , (req, res) => {
     // personal img가 등록되어 있는지 확인
     if(req.user.personalImg){
         // 서버 경로에 img 유무 확인
-        console.log("11111111111111111111111111111111111111111");
         fs.stat(req?.user?.personalImg, function(err){
             if(err) return res.json({success: false});
 
@@ -141,8 +132,7 @@ router.post('/modified_personal_img', auth , (req, res) => {
         });
         
     }else{
-        // 아직 이미지가 등록이 안되었을 경우,
-        console.log("2222222222222222222222222222222222222222");
+        // 아직 이미지가 등록이 안되었을 경우,s
         upload(req, res, err => {
             if (err) {
                 console.log(`[SERVER] [USERS ROUTER] [MODIFIED_PERSONAL_IMG POST] path: ${req.route.path}, ERR: ${JSON.stringify(err)} `);
@@ -153,7 +143,6 @@ router.post('/modified_personal_img', auth , (req, res) => {
                 if(err){
                     return req.json({ success: false, err});
                 }
-                
             });
             console.log(`[SERVER] [USERS ROUTER] [MODIFIED_PERSONAL_IMG POST] path: ${req.route.path}, FILE: ${JSON.stringify(res?.req?.file)} `);
             return res.status(200).json({ success: true, result: res?.req?.file?.path });
@@ -165,49 +154,59 @@ router.post('/modified_personal_img', auth , (req, res) => {
 
 const UPPER_PHOTO_BASE_PATH = `uploads/user/upper/`;
 const PERSONAL_PHOTO_BASE_PATH = `uploads/user/personal/`;
+// 개인 정보 변경
 router.patch('/modified_personal_info', auth, authorNameUnique, (req, res)=>{
     console.log(`[SERVER] [USERS ROUTER] [MODIFIED PERSONAL INFO PATCH] path: ${req?.route?.path}, REQUEST DATA: ${JSON.stringify(req?.body)} `);
 
-    if(fs.existsSync(req?.body?.upperPhoto?.path)){
-        // 임시 폴더에 파일이 있을 경우( === 즉 사용자가, 이미지를 변경한 경우), 서버.user.upper 폴더로 이동
+    let [rbody, ruser] = [req.body, req.user];
+    if(rbody.upperPhoto.path !== rbody.preUpperPhoto.path){
+        // 이전 이미지 경로와 바뀐 이미지 경로가 다르면 > 이미지 변경됨
+        if(fs.existsSync(rbody.upperPhoto?.path)){
+            // 임시 폴더에 파일이 있을 경우, 서버.user.upper 폴더로 이동
+    
+            fs.rename(rbody.upperPhoto?.path, UPPER_PHOTO_BASE_PATH+rbody.upperPhoto?.name, function(err){
+                if(err) return res.json({ success:false, err, });
 
-        fs.rename(req?.body?.upperPhoto?.path, UPPER_PHOTO_BASE_PATH+req?.body?.upperPhoto?.name, function(err){
-            if(err) return res.json({ success:false, err, });
-
-            // 기존 이미지 제거
-            fs.unlink(req.user.upperImgPath, ()=>{});
-        });
+                // 기존 파일 제거
+                fs.unlink(rbody.preUpperPhoto.path, ()=>{});
+            });
+        }
     }
 
-    if(fs.existsSync(req?.body?.personalPhoto?.path)){
+    if(rbody.personalPhoto.path !== rbody.prePersonalPhoto.path){
+        // 이전 이미지 경로와 바뀐 이미지 경로가 다르면 > 이미지 변경됨
+        if(fs.existsSync(rbody.personalPhoto?.path)){
 
-        // 임시 폴더에 파일이 있을 경우( === 즉 사용자가, 이미지를 변경한 경우), 서버.user.personal 폴더로 이동
-        fs.rename(req?.body?.personalPhoto?.path, PERSONAL_PHOTO_BASE_PATH+req?.body?.personalPhoto?.name, function(err){
-            if(err) return res.json({ success:false, err, });
+            // 임시 폴더에 파일이 있을 경우( === 즉 사용자가, 이미지를 변경한 경우), 서버.user.personal 폴더로 이동
+            fs.rename(rbody.personalPhoto?.path, PERSONAL_PHOTO_BASE_PATH+rbody.personalPhoto?.name, function(err){
+                if(err) return res.json({ success:false, err, });
 
-            // 기존 이미지 제거
-            fs.unlink(req.user.personalImgPath, ()=>{});
-        });
+                // 기존 이미지 제거
+                console.log("2. DELETE!!!!!!!!!!!!!!!!!!!");
+                fs.unlink(rbody.prePersonalPhoto.path, ()=>{});
+            });
+        }
     }
 
-    req.body = {
-        ...req.body, 
-        upperPhoto: {...req.body.upperPhoto, path :`uploads\\user\\upper\\${req.body.upperPhoto.name}`}, 
-        personalPhoto: {...req.body.personalPhoto, path :`uploads\\user\\personal\\${req.body.personalPhoto.name}`} 
+    // req에서 받아온 path는 tmp 경로이기 때문에 user 경로로 바꾸어서 db에 저장한다.
+    rbody = {
+        ...rbody, 
+        upperPhoto: {...rbody.upperPhoto, path :`uploads\\user\\upper\\${rbody.upperPhoto.name}`}, 
+        personalPhoto: {...rbody.personalPhoto, path :`uploads\\user\\personal\\${rbody.personalPhoto.name}`} 
     };
 
-    req.body = {...req.body, photoPath: `uploads\\photo\\${req.body.photoName}`};
+    // db에 변경된 데이터 저장
     User.findOneAndUpdate(
-        { _id:req.user._id}, 
+        { _id:ruser._id}, 
         {
-            personalImgName: req.body.personalPhoto.name,
-            personalImgPath: req.body.personalPhoto.path,
-            upperImgName: req.body.upperPhoto.name,
-            upperImgPath: req.body.upperPhoto.path,
-            instruction: req.body.instruction,
-            authorName: req.body.authorName,
-            homepage: req.body.homepage,
-            twitter: req.body.twitter,
+            personalImgName: rbody.personalPhoto.name,
+            personalImgPath: rbody.personalPhoto.path,
+            upperImgName: rbody.upperPhoto.name,
+            upperImgPath: rbody.upperPhoto.path,
+            instruction: rbody.instruction,
+            authorName: rbody.authorName,
+            homepage: rbody.homepage,
+            twitter: rbody.twitter,
         },
         (err)=>{
             if(err) return res.json({ success:false, err:err.keyPattern});
@@ -221,19 +220,12 @@ router.patch('/modified_personal_info', auth, authorNameUnique, (req, res)=>{
 
 });
 
+// 개인 페이지의 유저 정보 반환
 router.post('/get_personal_info', auth, (req, res)=>{
     
     let isUser = (parseInt(req.body.key) === req.user.key);
-    // 해당 본인 페이지라면
-    console.log("################################################");
-    console.log(typeof req.body.key);
-    console.log(typeof req.user.key);
-    // isUser = (req.body.key === req.user.key);
-    // if(req.body.key === req.user.key){
-    //     isUser =true;
-    // else isUser = false;
+    // 해당 본인 페이지인지 확인
 
-    console.log(isUser);
     User.findOne({key: req.body.key}, (err, doc)=>{
 
         if(err) {
@@ -269,18 +261,16 @@ router.post('/get_personal_info', auth, (req, res)=>{
     });
 });
 
-router.post('/follow', auth, (req, res)=>{
-    
+// 팔로우 api
+router.post('/follow', auth, (req, res)=>{    
     console.log(`[SERVER] [USERS ROUTER] [FOLLOW POST] path: ${req?.route?.path}, RESULT DATA: ${JSON.stringify(req.body.key)} `);
     console.log(`[SERVER] [USERS ROUTER] [FOLLOW POST] path: ${req?.route?.path}, RESULT DATA: ${JSON.stringify(req.user.key)} `);
-
 
     // follow 할경우
     if(req.body.follow){
         // 해당 작품의 작가의 팔로워 추가
         User.findOneAndUpdate({key: req.body.key}, {$push: {follower: req.user.key} }, (err, doc)=>{
             if(err) return res.json({success: false, err});
-            // return res.json({success: true});
         });
 
         // 유저의 팔로우 추가
@@ -303,9 +293,9 @@ router.post('/follow', auth, (req, res)=>{
         });
     }
 
-    
 });
 
+// 팔로우 여부 확인하는 api
 router.post('/is_follow', auth, (req,res) => {
 
     User.findOne({key: req.user.key}, (err, doc)=>{
@@ -317,8 +307,16 @@ router.post('/is_follow', auth, (req,res) => {
     });
 });
 
+// 작가 이름 검색 api
+router.get('/search_author', (req, res)=>{
+
+    User.find({authorName: {$regex: ".*" + req.query.searchTxt + ".*"} }, (err, doc)=>{
+            if(err) return res.json({ success:false, err });
+        
+            return res.json({ success:true, result: doc });
+        
+        }).limit(100);
+});
+
 
 module.exports=router;
-
-
-// export{};
