@@ -4,7 +4,9 @@ const multer = require('multer');
 const { User } = require("../models/User");
 const { auth } = require("../middleware/auth");
 const { authorNameUnique } = require("../middleware/userMiddleware");
+const { transporter } = require("../config/email");
 const fs = require('fs');
+const { json } = require('body-parser');
 
 // 회원가입 api
 router.post("/register", (req, res) => {
@@ -316,6 +318,38 @@ router.get('/search_author', (req, res)=>{
             return res.json({ success:true, result: doc });
         
         }).limit(100);
+});
+
+router.post('/get_verified_code', (req, res) =>{
+    const min = 100000;
+    const max = 999999;
+    const verificationNumber = Math.floor(Math.random()*(max-min+1) ) + min;
+
+    const mailOptions = {
+        from: '"Newone" <yunyami0605@naver.com>',
+        to: req.body.email,
+        subject: "[Newone] 인증 관련 이메일 입니다.",
+        text: "반갑습니다. 인증 번호 : " + verificationNumber + " 를 입력해주세요. 감사합니다.",
+    };
+
+    transporter.sendMail(mailOptions, (err, info)=>{
+        if(err){
+            console.log("Test!!!!!1");
+            console.log(err);
+            return res.json({ success:false, err });
+        }
+        console.log("Test!!!!!2");
+
+        return res.json({ success:true, verificationNumber});
+        
+    });
+
+            // if(!response.success) return res.json({ success:false, err: response.err});
+            // return res.json({ success:true, verificationNumber: response.verificationNumber});
+
+    
+        // return res.json({ success:true, verificationNumber});
+    
 });
 
 

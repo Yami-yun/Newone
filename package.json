@@ -1,5 +1,6 @@
 {
   "dependencies": {
+    "nodemailer": "6.4.17",
     "react-router-dom": "5.2.0"
   }
 }
