@@ -6,7 +6,8 @@ const { auth } = require("../middleware/auth");
 const { authorNameUnique } = require("../middleware/userMiddleware");
 const { transporter } = require("../config/email");
 const fs = require('fs');
-const { json } = require('body-parser');
+const bcrypt = require('bcrypt');
+const saltRounds = 10;
 
 // 회원가입 api
 router.post("/register", (req, res) => {
@@ -17,7 +18,7 @@ router.post("/register", (req, res) => {
     // 회원가입 정보를 user db에 저장
     user.save((err, doc)=>{
         if(err) return res.json({ success: false, err: err.keyPattern });
-        console.log(`[SERVER] [USER ROUTER] [REGISTER POST] path: ${req.route.path}, Body: ${JSON.stringify(req.body)} `);
+        // console.log(`[SERVER] [USER ROUTER] [REGISTER POST] path: ${req.route.path}, Body: ${JSON.stringify(req.body)} `);
 
         return res.status(200).json({
             success: true
@@ -41,12 +42,13 @@ router.get("/auth", auth, (req, res) => {
         homepage: req.user.homepage,
         twitter: req.user.twitter,
         key: req.user.key,
+        alarm: req.user.alarm,
     });
 });
 
 // logout api
 router.get("/logout", auth, (req, res) => {
-    console.log(`[SERVER] [USER ROUTER] [LOGOUT GET] path: ${req.route.path}, Find Model: ${JSON.stringify(req.user)} `);
+    // console.log(`[SERVER] [USER ROUTER] [LOGOUT GET] path: ${req.route.path}, Find Model: ${JSON.stringify(req.user)} `);
 
     //db에서 토큰 초기화
     User.findOneAndUpdate( { _id:req.user._id}, {token:"", tokenExp: ""}, (err, doc) => {
@@ -61,7 +63,7 @@ router.get("/logout", auth, (req, res) => {
 // login api
 router.post("/login", (req, res) => {
     User.findOne({ email: req.body.email }, (err, user) => {
-        console.log(`[SERVER] [USER ROUTER] [LOGIN POST] path: ${req.route.path}, Find Model: ${JSON.stringify(user)} `);
+        // console.log(`[SERVER] [USER ROUTER] [LOGIN POST] path: ${req.route.path}, Find Model: ${JSON.stringify(user)} `);
         // 이메일 등록 여부 확인
         if(!user){
             return res.json({
@@ -117,7 +119,7 @@ router.post('/modified_personal_img', auth , (req, res) => {
             fs.unlink(req?.user?.personalImg, ()=>{
                 upload(req, res, err => {
                     if (err) {
-                        console.log(`[SERVER] [USERS ROUTER] [MODIFIED_PERSONAL_IMG POST] path: ${req.route.path}, ERR: ${JSON.stringify(err)} `);
+                        // console.log(`[SERVER] [USERS ROUTER] [MODIFIED_PERSONAL_IMG POST] path: ${req.route.path}, ERR: ${JSON.stringify(err)} `);
                         return req.json({ success: false, err })
                     }
                     
@@ -127,7 +129,7 @@ router.post('/modified_personal_img', auth , (req, res) => {
                         }
                         
                     });
-                    console.log(`[SERVER] [USERS ROUTER] [MODIFIED_PERSONAL_IMG POST] path: ${req.route.path}, FILE: ${JSON.stringify(res?.req?.file)} `);
+                    // console.log(`[SERVER] [USERS ROUTER] [MODIFIED_PERSONAL_IMG POST] path: ${req.route.path}, FILE: ${JSON.stringify(res?.req?.file)} `);
                     return res.status(200).json({ success: true, result: res?.req?.file?.path });
                 });
             });
@@ -137,7 +139,7 @@ router.post('/modified_personal_img', auth , (req, res) => {
         // 아직 이미지가 등록이 안되었을 경우,s
         upload(req, res, err => {
             if (err) {
-                console.log(`[SERVER] [USERS ROUTER] [MODIFIED_PERSONAL_IMG POST] path: ${req.route.path}, ERR: ${JSON.stringify(err)} `);
+                // console.log(`[SERVER] [USERS ROUTER] [MODIFIED_PERSONAL_IMG POST] path: ${req.route.path}, ERR: ${JSON.stringify(err)} `);
                 return req.json({ success: false, err })
             }
             
@@ -146,7 +148,7 @@ router.post('/modified_personal_img', auth , (req, res) => {
                     return req.json({ success: false, err});
                 }
             });
-            console.log(`[SERVER] [USERS ROUTER] [MODIFIED_PERSONAL_IMG POST] path: ${req.route.path}, FILE: ${JSON.stringify(res?.req?.file)} `);
+            // console.log(`[SERVER] [USERS ROUTER] [MODIFIED_PERSONAL_IMG POST] path: ${req.route.path}, FILE: ${JSON.stringify(res?.req?.file)} `);
             return res.status(200).json({ success: true, result: res?.req?.file?.path });
             
         });
@@ -158,7 +160,7 @@ const UPPER_PHOTO_BASE_PATH = `uploads/user/upper/`;
 const PERSONAL_PHOTO_BASE_PATH = `uploads/user/personal/`;
 // 개인 정보 변경
 router.patch('/modified_personal_info', auth, authorNameUnique, (req, res)=>{
-    console.log(`[SERVER] [USERS ROUTER] [MODIFIED PERSONAL INFO PATCH] path: ${req?.route?.path}, REQUEST DATA: ${JSON.stringify(req?.body)} `);
+    // console.log(`[SERVER] [USERS ROUTER] [MODIFIED PERSONAL INFO PATCH] path: ${req?.route?.path}, REQUEST DATA: ${JSON.stringify(req?.body)} `);
 
     let [rbody, ruser] = [req.body, req.user];
     if(rbody.upperPhoto.path !== rbody.preUpperPhoto.path){
@@ -184,7 +186,6 @@ router.patch('/modified_personal_info', auth, authorNameUnique, (req, res)=>{
                 if(err) return res.json({ success:false, err, });
 
                 // 기존 이미지 제거
-                console.log("2. DELETE!!!!!!!!!!!!!!!!!!!");
                 fs.unlink(rbody.prePersonalPhoto.path, ()=>{});
             });
         }
@@ -231,16 +232,16 @@ router.post('/get_personal_info', auth, (req, res)=>{
     User.findOne({key: req.body.key}, (err, doc)=>{
 
         if(err) {
-            console.log(`[SERVER] [USERS ROUTER] [GET PERSONAL INFO POST] path: ${req?.route?.path}, ERR DATA: ${JSON.stringify(err)} `);
+            // console.log(`[SERVER] [USERS ROUTER] [GET PERSONAL INFO POST] path: ${req?.route?.path}, ERR DATA: ${JSON.stringify(err)} `);
             return res.json({success: false, err});
         };
 
         if(!doc){
-            console.log(`[SERVER] [USERS ROUTER] [GET PERSONAL INFO POST] path: ${req?.route?.path}, NO FIND DATA `);
+            // console.log(`[SERVER] [USERS ROUTER] [GET PERSONAL INFO POST] path: ${req?.route?.path}, NO FIND DATA `);
             return res.json({success: false});
         }
 
-        console.log(`[SERVER] [USERS ROUTER] [GET PERSONAL INFO POST] path: ${req?.route?.path}, RESULT DATA: ${JSON.stringify(doc)} `);
+        // console.log(`[SERVER] [USERS ROUTER] [GET PERSONAL INFO POST] path: ${req?.route?.path}, RESULT DATA: ${JSON.stringify(doc)} `);
 
         return res.json({
             success:true, 
@@ -259,14 +260,15 @@ router.post('/get_personal_info', auth, (req, res)=>{
                 isUser : isUser,
                 follow : doc.follow,
                 follower : doc.follower,
+                alarm: doc.alarm,
             } });
     });
 });
 
 // 팔로우 api
 router.post('/follow', auth, (req, res)=>{    
-    console.log(`[SERVER] [USERS ROUTER] [FOLLOW POST] path: ${req?.route?.path}, RESULT DATA: ${JSON.stringify(req.body.key)} `);
-    console.log(`[SERVER] [USERS ROUTER] [FOLLOW POST] path: ${req?.route?.path}, RESULT DATA: ${JSON.stringify(req.user.key)} `);
+    // console.log(`[SERVER] [USERS ROUTER] [FOLLOW POST] path: ${req?.route?.path}, RESULT DATA: ${JSON.stringify(req.body.key)} `);
+    // console.log(`[SERVER] [USERS ROUTER] [FOLLOW POST] path: ${req?.route?.path}, RESULT DATA: ${JSON.stringify(req.user.key)} `);
 
     // follow 할경우
     if(req.body.follow){
@@ -328,29 +330,37 @@ router.post('/get_verified_code', (req, res) =>{
     const mailOptions = {
         from: '"Newone" <yunyami0605@naver.com>',
         to: req.body.email,
-        subject: "[Newone] 인증 관련 이메일 입니다.",
+        subject: `[Newone] ${req.body.str} 인증 관련 이메일 입니다.`,
         text: "반갑습니다. 인증 번호 : " + verificationNumber + " 를 입력해주세요. 감사합니다.",
     };
 
     transporter.sendMail(mailOptions, (err, info)=>{
         if(err){
-            console.log("Test!!!!!1");
-            console.log(err);
             return res.json({ success:false, err });
         }
-        console.log("Test!!!!!2");
 
         return res.json({ success:true, verificationNumber});
         
     });
-
-            // if(!response.success) return res.json({ success:false, err: response.err});
-            // return res.json({ success:true, verificationNumber: response.verificationNumber});
-
-    
-        // return res.json({ success:true, verificationNumber});
-    
 });
 
+
+// 비밀번호 변경 api
+router.post('/modify_password', (req, res) =>{
+
+    bcrypt.genSalt(saltRounds, function(err, salt){
+        //hash 비밀번호를 db에 저장
+        bcrypt.hash(req.body.password, salt, function(err, hash){
+            if(err) return res.json({success:false, err});
+
+            User.findOneAndUpdate({email: req.body.email}, {password: hash}, (err, doc)=>{
+                if(err) return res.json({success:false, err});
+                res.json({ success:true });
+            });
+
+        });
+    });
+
+});
 
 module.exports=router;

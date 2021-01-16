@@ -71,10 +71,7 @@ const userSchema = mongoose.Schema({
         type: String,
         default: "",
     },
-    alarm:{
-        type: Array,
-        default: [],
-    },
+    alarm:[new mongoose.Schema({createDate: { type: Date, default: new Date() }, str: String, isShow: Boolean, photoKey:String})],
     follow:{
         type: Array,
         default: [],
@@ -96,7 +93,7 @@ userSchema.pre('save', function(next){
             //hash 비밀번호를 db에 저장
             bcrypt.hash(user.password, salt, function(err,hash){
                 if(err) return next(err);
-                console.log(`[SERVER] [USER MODEL] path: /register, pw: ${hash} `);
+                // console.log(`[SERVER] [USER MODEL] path: /register, pw: ${hash} `);
                 user.password = hash;
                 next();
             })
@@ -106,7 +103,8 @@ userSchema.pre('save', function(next){
         next();
     }
 
-})
+});
+
 
 // 로그인 비번 비교 함수
 userSchema.methods.comparePassword = function(requestPassword, cb){
@@ -134,16 +132,7 @@ userSchema.methods.generateToken = function(cb){
 
 
 }
-// userSchema.statics.findByToken = function (token, cb) {
-//     var user = this;
 
-//     jwt.verify(token, 'secret', function (err, decode) {
-//         user.findOne({ "_id": decode, "token": token }, function (err, user) {
-//             if (err) return cb(err);
-//             cb(null, user);
-//         })
-//     })
-// }
 
 userSchema.statics.findByToken = function(token, cb){
     const user = this;
@@ -153,7 +142,7 @@ userSchema.statics.findByToken = function(token, cb){
         user.findOne({"_id": decode, "token": token}, function (err, user){
             if(err) return cb(err);
 
-            console.log(`Auth return model : ${user}`);
+            // console.log(`Auth return model : ${user}`);
 
             // 찾은 결과 db값을 cb로 보낸다.
             cb(null, user);

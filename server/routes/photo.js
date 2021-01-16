@@ -27,10 +27,10 @@ router.post("/upload", (req, res)=>{
     //가져온 이미지를 저장을 해주면 된다.
     upload(req, res, err => {
         if (err) {
-            console.log(`[SERVER] [PHOTO ROUTER] [UPLOAD POST] path: ${req.route.path}, ERR: ${JSON.stringify(err)} `);
+            // console.log(`[SERVER] [PHOTO ROUTER] [UPLOAD POST] path: ${req.route.path}, ERR: ${JSON.stringify(err)} `);
             return req.json({ success: false, err })
         }
-        console.log(`[SERVER] [PHOTO ROUTER] [UPLOAD POST] path: ${req.route.path}, TEMP IMG FILE: ${JSON.stringify(res?.req?.file)} `);
+        // console.log(`[SERVER] [PHOTO ROUTER] [UPLOAD POST] path: ${req.route.path}, TEMP IMG FILE: ${JSON.stringify(res?.req?.file)} `);
         return res.json({ success: true, filePath: res?.req?.file?.path, fileName: res?.req?.file?.filename })
     });
 
@@ -39,7 +39,7 @@ router.post("/upload", (req, res)=>{
 // 임시 포토 파일 삭제
 router.delete("/tmp_photo_delete", (req, res)=>{
     
-    console.log(`[SERVER] [PHOTO ROUTER] [TMP PHOTO DELETE DELETE] path: ${req?.route?.path}, REQUEST DATA: ${JSON.stringify(req?.body)} `);
+    // console.log(`[SERVER] [PHOTO ROUTER] [TMP PHOTO DELETE DELETE] path: ${req?.route?.path}, REQUEST DATA: ${JSON.stringify(req?.body)} `);
     if(!req?.body?.photoPath) return res.json({success: true});
 
     return res.json({success: true});
@@ -48,7 +48,7 @@ router.delete("/tmp_photo_delete", (req, res)=>{
 // 작품 등록 api
 const PHOTO_BASE_PATH = `uploads/photo/`;
 router.post("/add", auth, (req,res) => {
-    console.log(`[SERVER] [PHOTO ROUTER] [ADD POST] path: ${req?.route?.path}, REQUEST DATA: ${JSON.stringify(req?.body)} `);
+    // console.log(`[SERVER] [PHOTO ROUTER] [ADD POST] path: ${req?.route?.path}, REQUEST DATA: ${JSON.stringify(req?.body)} `);
 
     // 서버 임시 tmp(임시) 폴더에 이미지 파일 이 있는지
     fs.stat(req?.body?.photoPath, function(err){
@@ -86,21 +86,34 @@ router.post("/add", auth, (req,res) => {
                     if(err) return res.json({ success:false, err});
                 });
 
+                console.log("################################");
+                console.log("################################");
+                console.log(photoModel);
+                console.log("################################");
+                console.log("################################");
+
+                // follow한 유저에게 작품 정보를 알린다.
+                User.updateMany(
+                    {follow: {$in: req.user.key}}, 
+                    {$push: {alarm: {str:`${req.user.authorName}님이 ${req.body.title} 작품을 등록하였습니다.`, isShow:false, photoKey:photoModel._id.toString(), createDate:new Date()} } }, (err, res)=>{
+                        if(err) return res.json({ success:false, err});
+
+                });
+
                 return res.json({ success:true });
             })
         }else{
-            console.log("############### No Find");
-            return res.status(200),json({ success: true });
+            return res.json({ success: false, err });
         }
     });
 });
 
 //db에서 해당 페이지 포토 정보 가져오기
 router.post('/get_photo_info', (req, res)=> {
-    console.log(`[SERVER] [PHOTO ROUTER] [GET_PHOTO_INFO POST] path: ${req.route.path}, RESULT: ${JSON.stringify(req.body)} `);
+    // console.log(`[SERVER] [PHOTO ROUTER] [GET_PHOTO_INFO POST] path: ${req.route.path}, RESULT: ${JSON.stringify(req.body)} `);
     PhotoModel.findOne({_id:req.body.photoId }, (err, doc)=>{
         if(err) res.json({success: false, err,})
-        console.log(`[SERVER] [PHOTO ROUTER] [GET_PHOTO_INFO POST] path: ${req.route.path}, RESULT: ${JSON.stringify(doc)} `);
+        // console.log(`[SERVER] [PHOTO ROUTER] [GET_PHOTO_INFO POST] path: ${req.route.path}, RESULT: ${JSON.stringify(doc)} `);
 
         return res.status(200).json({success : true, result:doc});
     });
@@ -109,7 +122,7 @@ router.post('/get_photo_info', (req, res)=> {
 
 //db에서 작가 정보 가져오기
 router.post('/get_author_info', (req, res)=> {
-    console.log(`[SERVER] [PHOTO ROUTER] [GET_AUTHOR_INFO POST] path: ${req.route.path}, BODY: ${JSON.stringify(req.body)} `);
+    // console.log(`[SERVER] [PHOTO ROUTER] [GET_AUTHOR_INFO POST] path: ${req.route.path}, BODY: ${JSON.stringify(req.body)} `);
     
     User.findOne({key:req.body.key}, (err, doc)=>{
         if(err) return res.json({success: false, err});
@@ -126,7 +139,7 @@ router.post('/get_author_info', (req, res)=> {
 
 // db에서 포토 데이터 삭제
 router.delete('/delete', auth, (req, res)=>{
-    console.log(`[SERVER] [PHOTO ROUTER] [PHOTO_DELETE DELETE] path: ${req.route.path}, BODY: ${JSON.stringify(req.body)} `);
+    // console.log(`[SERVER] [PHOTO ROUTER] [PHOTO_DELETE DELETE] path: ${req.route.path}, BODY: ${JSON.stringify(req.body)} `);
 
     // 서버에서 포토 파일 삭제
     fs.unlink(req.body.path, ()=>{});
@@ -149,7 +162,7 @@ router.delete('/delete', auth, (req, res)=>{
 
 // user db에서 해당 포토 데이터를 포토 변경 페이지에서 변경한 데이터로 수정
 router.patch('/modify', auth, (req, res) =>{
-    console.log(`[SERVER] [PHOTO ROUTER] [PHOTO_MODIFY PATCH] path: ${req.route.path}, BODY: ${JSON.stringify(req.body)} `);
+    // console.log(`[SERVER] [PHOTO ROUTER] [PHOTO_MODIFY PATCH] path: ${req.route.path}, BODY: ${JSON.stringify(req.body)} `);
 
     let [rbody, ruser] = [req.body.data, req.user.photo];
     // 현재 로그인한 유저 db에서 photo.path 배열에서   기존 photoPath 데이터를 지운다. 
@@ -202,7 +215,7 @@ router.patch('/modify', auth, (req, res) =>{
 
 // 작품에 new 클릭시 해당 유저의 key를 작품 db의 new 필드에 저장한다.
 router.patch('/new', auth, findPhotoModelById, (req, res)=>{
-    console.log(`[SERVER] [PHOTO ROUTER] [PHOTO NEW PATCH] path: ${req.route.path}, BODY: ${JSON.stringify(req.photo)} `);
+    // console.log(`[SERVER] [PHOTO ROUTER] [PHOTO NEW PATCH] path: ${req.route.path}, BODY: ${JSON.stringify(req.photo)} `);
 
     if(req.photo.new.indexOf(req.user.key) === -1){
         // new를 눌렀을 경우 -> db에 해당 user key 저장
@@ -227,14 +240,14 @@ router.patch('/new', auth, findPhotoModelById, (req, res)=>{
 router.post('/is_new', auth, findPhotoModelById, (req, res)=>{
     // photo db의 new 배열에 user key가 있으면 => 사용자가 해당 이미지에 이전에 New를 눌렀음
     const result = req.photo?.new.indexOf(req.user.key) !== -1;
-    console.log(`[SERVER] [PHOTO ROUTER] [PHOTO IS NEW PATCH] path: ${req.route.path}, RESULT: ${JSON.stringify(result)} `);
+    // console.log(`[SERVER] [PHOTO ROUTER] [PHOTO IS NEW PATCH] path: ${req.route.path}, RESULT: ${JSON.stringify(result)} `);
 
     return res.json({success:true, result});
 });
 
 // 작품을 추천할 목록을 반환한다.
 router.get('/get_recommend_photo', (req, res)=>{
-    console.log(`[SERVER] [PHOTO ROUTER] [RECOMMEND PHOTO GET] path: ${req.route.path}, BODY : ${JSON.stringify(req.query.tagList)} `);
+    // console.log(`[SERVER] [PHOTO ROUTER] [RECOMMEND PHOTO GET] path: ${req.route.path}, BODY : ${JSON.stringify(req.query.tagList)} `);
     
     // 해당 페이지 작품에 있는 모든 테그와 관련된 작품을 추출한다.
     PhotoModel.find({"tagList": {$all: req.query.tagList}}, (err, doc)=>{
