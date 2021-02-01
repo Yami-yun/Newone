@@ -113,7 +113,6 @@ router.post('/get_photo_info', (req, res)=> {
     // console.log(`[SERVER] [PHOTO ROUTER] [GET_PHOTO_INFO POST] path: ${req.route.path}, RESULT: ${JSON.stringify(req.body)} `);
     PhotoModel.findOne({_id:req.body.photoId }, (err, doc)=>{
         if(err) res.json({success: false, err,})
-        // console.log(`[SERVER] [PHOTO ROUTER] [GET_PHOTO_INFO POST] path: ${req.route.path}, RESULT: ${JSON.stringify(doc)} `);
 
         return res.status(200).json({success : true, result:doc});
     });

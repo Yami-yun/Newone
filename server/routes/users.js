@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const multer = require('multer');
 const { User } = require("../models/User");
+const { AdminModel } = require("../models/Admin");
 const { auth } = require("../middleware/auth");
 const { authorNameUnique } = require("../middleware/userMiddleware");
 const { transporter } = require("../config/email");
@@ -28,6 +29,9 @@ router.post("/register", (req, res) => {
 
 // 페이지 이동 시, 접근 권환 확인 api
 router.get("/auth", auth, (req, res) => {
+
+    //AdminModel.countToday();
+
     res.status(200).json({
         isAuth: true,
         email: req.user.email,
@@ -43,6 +47,7 @@ router.get("/auth", auth, (req, res) => {
         twitter: req.user.twitter,
         key: req.user.key,
         alarm: req.user.alarm,
+        role:req.user.role,
     });
 });
 
@@ -83,6 +88,8 @@ router.post("/login", (req, res) => {
             // 토큰 생성
             user.generateToken((err, user) => {
                 if (err) return res.status(400).send(err);
+
+                AdminModel.countToday(user.key);
 
                 //cooke에 token, exp 저장
                 res.cookie("w_authExp", user.tokenExp);
@@ -303,7 +310,10 @@ router.post('/follow', auth, (req, res)=>{
 router.post('/is_follow', auth, (req,res) => {
 
     User.findOne({key: req.user.key}, (err, doc)=>{
+        console.log("############### test1");
         if(err) return res.json({success: false, err});
+        console.log("############### test2");
+        console.log(err, doc);
 
         const result = doc.follow.includes(req.body.key);
         return res.json({success: true, result,});

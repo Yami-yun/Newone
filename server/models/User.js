@@ -80,6 +80,10 @@ const userSchema = mongoose.Schema({
         type: Array,
         default: [],
     },
+    createDate:{
+        type: Date,
+        default: Date.now,
+    },
 })
 
 // user 모델 db에 데이터 입력 전, 실행
