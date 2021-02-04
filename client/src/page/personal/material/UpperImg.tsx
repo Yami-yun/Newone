@@ -33,9 +33,8 @@ const UpperImgBox = styled.img`
     }
 `;
 
-function UpperImg({personalInfo:personalInfo, userData:userData}:any){
-
-    console.log(personalInfo);
+// 개인 페이지 상단 이미지 컴포넌트
+function UpperImg({personalInfo:personalInfo}:any){
 
     return (
     <>

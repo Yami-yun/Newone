@@ -87,9 +87,10 @@ const SwipeBtn = styled.button`
     }
 `;
 
+// 금일 랭킹 리스트 컴포넌트
 function LankingList({lankList}:any) {
     const date = new Date();
-    // const y = date.getFullYear().toString();
+
     const m = date.getMonth() + 1 >= 10 ? (date.getMonth() + 1).toString() : "0"+(date.getMonth() + 1).toString();
     const d = date.getDate() >= 10 ? date.getDate().toString() : "0"+date.getDate().toString();
     const scrollRef = useRef<any>(null);

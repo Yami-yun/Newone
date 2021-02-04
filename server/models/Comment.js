@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 
-
+// 작품 댓글 스키마
 const commentSchema = mongoose.Schema({
     createDate:{
         type: Date,

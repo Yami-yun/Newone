@@ -135,9 +135,10 @@ const LoginSubBtn=styled.button`
     }
 `;
 
+// 로그인 화면 컴포넌트
 function Login(){
-    const [email, setEmail] = useState("");
-    const [password, setpassword] = useState("");
+    const [email, setEmail] = useState<string>("");
+    const [password, setpassword] = useState<string>("");
     const dispatch = useDispatch();
     const history = useHistory();
 

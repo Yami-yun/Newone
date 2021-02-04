@@ -7,9 +7,8 @@ const { PhotoModel } = require("../models/Photo");
 
 const { auth } = require("../middleware/auth");
 
-
+// 일일 접속자 수 데이터를 반환하는 api
 router.get('/data', auth, (req, res)=>{
-
     AdminModel.find({}, (err, docs)=>{
         if(err) res.json({success:false, err});
         console.log("#######################");
@@ -19,7 +18,7 @@ router.get('/data', auth, (req, res)=>{
     
 });
 
-
+// 모든 작가 정보를 반환하는 api
 router.get('/get_all_user_data', auth, (req, res)=>{
 
     User.find({}, {authorName:1, email:1, createDate:1, follow:1, follower:1}, (err, docs)=>{
@@ -30,6 +29,7 @@ router.get('/get_all_user_data', auth, (req, res)=>{
     
 });
 
+// 모든 작품 정보를 반환하는 api
 router.get('/get_all_photo_data', auth, (req, res)=>{
 
     PhotoModel.find({}, {authorName:1, title:1, createDate:1, _id:1}, (err, docs)=>{
@@ -52,10 +52,7 @@ router.delete('/delete_user_info', auth, (req, res)=>{
 
             return res.json({success:true});
         })
-        
-        
     })
-    
 });
 
 // 관리자 페이지에서 작품 정보 삭제 api
@@ -66,10 +63,6 @@ router.delete('/delete_photo_info', auth, (req, res)=>{
 
         return res.json({success:true});
     })
-
 });
-
-
-
 
 module.exports=router;

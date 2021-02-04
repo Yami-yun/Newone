@@ -32,7 +32,6 @@ const Whole=styled.section`
 `;
 
 const TabBar = styled.ul`
-/* width: 1000px; */
     width: 100%;
     height: 60px;
 
@@ -100,7 +99,6 @@ const PhotoList = styled.article`
     width: 100%;
     padding: 14px 18px 0px;
     box-sizing: border-box;
-    /* border: 1px solid; */
 
     display: grid;
     grid-template-columns: repeat(3, 33.333333333333%);
@@ -141,16 +139,14 @@ const Photo = styled.img`
     }
 `;
 
-
+// 개인 페이지 작가 작품 리스트
 function BottomImgList({personalInfo}:any){
     const history = useHistory();
     const dispatch = useDispatch();
     
-
     const [tabNum, setTabNum] = useState<Number>(0);
 
     const photoData = personalInfo?.photo;
-    console.log(photoData);
 
     // 일러스트, 만화 ,캘리그라피 Tab click시 유저가 등록한 해당 type 이미지들을 보여줌
     const onTabHandler = (tabNum:Number) => {
@@ -182,6 +178,8 @@ function BottomImgList({personalInfo}:any){
                 <TabItem isClicked={tabNum===1} onClick={()=>{onTabHandler(1)}}>만화</TabItem>
                 <TabItem isClicked={tabNum===2} onClick={()=>{onTabHandler(2)}}>캘리그라피</TabItem>
             </TabBar>
+
+            {/* 작가 작품 리스트 */}
             <PhotoList>
                 {photoData && photoData.map(
                     (data:any, index:number)=>{

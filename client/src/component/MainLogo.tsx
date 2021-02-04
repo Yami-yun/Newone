@@ -1,7 +1,6 @@
-import React, {useState} from 'react';
+import React from 'react';
 import styled from 'styled-components';
 import { Link } from 'react-router-dom';
-import { media } from 'component/customMediaQuery';
 import GlobalStyle from 'globalStyles';
 
 const Whole = styled.h1`
@@ -11,16 +10,9 @@ const Whole = styled.h1`
     font-size: 2.5rem;
     color: #00A0FF;
     cursor: pointer;
-    /* ${media.tablet}{
-        font-size: 2rem;
-    }
-
-    ${media.phone}{
-        font-size: 1.4rem;
-    } */
-    /* border: 1px solid #00A0FF; */
 `;
 
+// 헤더 좌측에 들어가는 Newone 로고 컴포넌트
 function MainLogo() {
 
     return (

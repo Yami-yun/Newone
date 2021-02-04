@@ -29,7 +29,7 @@ function App() {
       <GlobalStyle />
       <Whole>
         <Switch>
-          {/* // 0 : 로그인 상관없는 페이지,  1 : 로그인 필요 페이지,  2: 로그인한 유저는 출입 불가능 페이지 */}
+          {/* // 0 : 로그인 상관없는 페이지,  1 : 로그인 필요 페이지,  2: 로그인한 유저는 출입 불가능 페이지 , 3: 관리자 페이지*/}
           <Route exact path="/" component={Auth(Main, 0)}/>
           <Route path="/personal/:id" component={Auth(Personal, 1)}/>
           <Route path="/login" component={Auth(Login, 2)}/>

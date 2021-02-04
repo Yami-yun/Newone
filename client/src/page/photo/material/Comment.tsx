@@ -140,7 +140,8 @@ const CommentInput = styled.input`
     }
 `;
 
-function Comment({photoInfo, authorInfo}:any){
+// 작품 페이지에서 코멘트 박스 컴포넌트
+function Comment({photoInfo}:any){
     const [comment, setComment] = useState<string>("");                 // 현재 작성 중인 댓글
     const [commentList, setCommentList] = useState<any>([]);            // 서버에서 받아온 댓글 리스트
     const [commentCount, setCommentCount] = useState<number>(1);                // 현재 보여주는 댓글 수,  1 이면 3개, 2이면 6개를 보여준다.
@@ -159,10 +160,11 @@ function Comment({photoInfo, authorInfo}:any){
         if(!comment) return alert("댓글을 입력해주세요");
         addComment({comment, photoInfo, }).then(
             response => {
-                console.log(response);
-                // 방금 등록한 코멘트가 상단위에 표시되게 추가.
-                setCommentList([response.payload.result, ...commentList]);
-                setComment("");
+                if(response.payload.success){
+                    // 방금 등록한 코멘트가 상단위에 표시되게 추가.
+                    setCommentList([response.payload.result, ...commentList]);
+                    setComment("");
+                }
                 dispatch(response);
             });
     };
@@ -172,7 +174,6 @@ function Comment({photoInfo, authorInfo}:any){
         deleteComment(tmp).then(
             response => {
                 dispatch(response);
-                console.log(response);
             });
     };
 

@@ -1,6 +1,10 @@
 import { media } from 'component/customMediaQuery';
 import styled from 'styled-components';
 
+
+//재활용성이 높은 input UI 컴포넌트
+
+// 하얀색 인풋 라벨
 export const WhiteInputLabel = styled.label`
     margin-top: 54px;
     margin-left:20px;
@@ -20,6 +24,7 @@ export const WhiteInputLabel = styled.label`
     }
 `;
 
+// 하얀색 인풋 박스
 export const InputBox=styled.input`
     width: 300px;
     height: 40px;
@@ -32,6 +37,7 @@ export const InputBox=styled.input`
     border-radius: 8px;
 `;
 
+// 하얀색 textarea
 export const InputParagraphBox=styled.textarea`
     width: 96%;
     height: 120px;

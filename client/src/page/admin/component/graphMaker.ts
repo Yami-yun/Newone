@@ -1,6 +1,8 @@
 export const canvasW = 800;
 export const canvasH = 520;
 
+// 그래프에 제작에 필요한 함수 정의
+
 // canvas y 좌표를 xy 좌표상으로 바꾼다.
 function remakeY(y:number):number{
     return canvasH-y;
@@ -44,7 +46,6 @@ export function Rect({ctx, x, y, w, h, c=""}:IRect):void{
     if(c){
         ctx.fillStyle = c;
     }
-    console.log(remakeY(y));
     ctx.fillRect(x, remakeY(y), w, (-1) * h);
 }
 
@@ -67,7 +68,7 @@ export function Text({ctx, x, y, text, c="black", size=11}:IText):void{
     ctx.fillText(text, x, remakeY(y)); 
 }
 
-// offset : 그래프 offsest, barGapW : 막대 사이 간격, xDataLen : 그래프 막대 갯수 
+// 그래프의 막대 갯수에 따른 막대 width를 반환  offset : 그래프 offsest, barGapW : 막대 사이 간격, xDataLen : 그래프 막대 갯수 
 export function GetBarW({offset, barGapW, xDataLen}:IGetBarW):number{
     return (canvasW - offset.x * 2 - barGapW * (xDataLen - 1) ) / xDataLen;;
 }

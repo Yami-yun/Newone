@@ -4,7 +4,7 @@ import GlobalStyle from 'globalStyles';
 import {InputBox} from 'component/input';
 import { VerifyBtn } from 'component/button';
 import { getVerifiedCode, modifyPassword } from 'redux/actions/userAction';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Link } from 'react-router-dom';
@@ -96,29 +96,31 @@ const initRegisterForm = {
     confirmPassword: "",
 };
 
+//  비밀번호 찾는 페이지 컴포넌트
 function FindPassword(){
     const dispatch = useDispatch();
     const history = useHistory();
-    const [registerForm, setRegisterForm] = useState(initRegisterForm);
+    const [registerForm, setRegisterForm] = useState(initRegisterForm);         // 비밀번호 찾기 폼 상태 변수
 
-    const [isVerified, setIsVerified] = useState<number>(0);        // 0: 인증 넘버 아직 수신 전 ,  1: 인증 넘버 수신 받음,  2: 인증 완료
-    const [verifiedCode, setVerifiedCode] = useState<string>();
-    const [checkVerifiedCode, setCheckVerifiedCode] = useState<string>();
+    const [isVerified, setIsVerified] = useState<number>(0);                    // 0: 인증 넘버 아직 수신 전 ,  1: 인증 넘버 수신 받음,  2: 인증 완료
+    const [verifiedCode, setVerifiedCode] = useState<string>();                 // 사용자가 입력한 인증번호
+    const [checkVerifiedCode, setCheckVerifiedCode] = useState<string>();       // 서버에서 받아온 인증번호
 
-    const emailCheck = (email:string) => {
+    //이메일 형식 체크
+    const emailCheck = (email:string):boolean => {
         const emailRegex = /^(([^<>()\[\].,;:\s@"]+(\.[^<>()\[\].,;:\s@"]+)*)|(".+"))@(([^<>()[\].,;:\s@"]+\.)+[^<>()[\].,;:\s@"]{2,})$/i;
         if(!emailRegex.test(email)) return false;
         return true;
     };
 
     // email, password, 2차 password, authorname state 저장
-    const onEmailHandler = (e:any) => { setRegisterForm({...registerForm, email: e.target.value}); };
-    const onPasswordHandler = (e:any) => { setRegisterForm({...registerForm, password: e.target.value}); };
-    const onConfirmPasswordHandler = (e:any) => { setRegisterForm({...registerForm, confirmPassword: e.target.value}); };
-    const onVerifiedCodeHandler = (e:any) => { setVerifiedCode(e.target.value);  };
+    const onEmailHandler = (e:React.ChangeEvent<HTMLInputElement>) => { setRegisterForm({...registerForm, email: e.target.value}); };
+    const onPasswordHandler = (e:React.ChangeEvent<HTMLInputElement>) => { setRegisterForm({...registerForm, password: e.target.value}); };
+    const onConfirmPasswordHandler = (e:React.ChangeEvent<HTMLInputElement>) => { setRegisterForm({...registerForm, confirmPassword: e.target.value}); };
+    const onVerifiedCodeHandler = (e:React.ChangeEvent<HTMLInputElement>) => { setVerifiedCode(e.target.value);  };
 
     // 인증 번호를 보낸다.
-    const onSendVerifiedNumberHandler = (e:any) => { 
+    const onSendVerifiedNumberHandler = (e:React.MouseEvent<HTMLButtonElement, MouseEvent>) => { 
         e.preventDefault();
         if(!emailCheck(registerForm.email)) return alert('이메일 형식이 아닙니다.');
 
@@ -132,19 +134,20 @@ function FindPassword(){
         return alert('인증 번호가 발송되었습니다.');
     };
 
-    const onCheckVerifiedNumberHandler = (e:any) => {
+    // 유저가 입력한 인증번호와 서버에서 받은 인증번호를 체크한다.
+    const onCheckVerifiedNumberHandler = (e:React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
         e.preventDefault();
         
+        // 인증 실패
         if(checkVerifiedCode !== verifiedCode) {
             setVerifiedCode("");
             return alert('인증 번호가 일치하지 않습니다.')
         };
 
-        setIsVerified(2);
-        // return alert('인증 번호가 일치합니다.');
+        setIsVerified(2);           // 인증 완료
     }
 
-    // 회원가입 양식 서버로 제출
+    // 비밀번호 변경 양식 서버로 제출
     const onSubmitHandler = (e:any) => {
         e.preventDefault();
 
@@ -160,7 +163,7 @@ function FindPassword(){
             password : registerForm.password,
         };
 
-        // 서버로 회원가입 형식 보냄
+        // 비밀번호 변경 api
         modifyPassword(body)
         .then(response => {
             if (response.payload.success) {
@@ -170,6 +173,7 @@ function FindPassword(){
         });
     };
 
+    // 인증 단계에 따른 인증버튼 UI 바꾸는 함수
     const VerifyUI = () => {
         if(isVerified === 0) {
             return <VerifyBtn type="button" onClick={onSendVerifiedNumberHandler}>인증번호 받기</VerifyBtn>;

@@ -14,7 +14,6 @@ import { media } from 'component/customMediaQuery';
 const Whole=styled.section`
     display:flex;
     margin-top: 62px;
-    /* border : 1px solid; */
     justify-content: space-around;
 
     ${media.tablet}{
@@ -86,7 +85,6 @@ const IDTxt = styled.p`
     font-weight: 800;
     line-height:20px;
     color: #00A0FF;
-    /* border: 1px solid; */
     ${media.tablet}{
         margin-right : 1.2em;
     }
@@ -104,7 +102,6 @@ const IconBox = styled.div`
 
     font-size: 1.8rem;
     color: #00A0FF;
-    /* border: 1px solid; */
     text-align: center;
 
     ${media.tablet}{
@@ -177,7 +174,7 @@ const PersonalDescription = styled.p`
     }
 `;
 
-function PersonalInfo({personalInfo:personalInfo, userData:userData}:any){
+function PersonalInfo({personalInfo}:any){
 
     const photoData = personalInfo?.photo;
     const [isFollow, setIsFollow] = useState<boolean>(false);
@@ -211,7 +208,6 @@ function PersonalInfo({personalInfo:personalInfo, userData:userData}:any){
         <GlobalStyle />
         <Whole>
             {/* personal img 영역 */}
-            {/* <PersonalImg src={ !data?.personalImgPath ? defaultImg : `${SERVER_PATH}${data?.personalImgPath}` } /> */}
             <PersonalImg src={ !personalInfo?.personalImgName ? defaultImg : `${SERVER_PATH}${personalInfo?.personalImgPath}` } />
 
             <PersonalInfoBox>

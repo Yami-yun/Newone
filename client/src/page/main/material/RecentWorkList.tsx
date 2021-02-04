@@ -69,7 +69,9 @@ const RecentWorkImgBox = styled.img`
     }
 `;
 
+// 최근 작품 리스트 컴포넌트
 function RecentWorkList({recentPhotoList}:any){
+    console.log(recentPhotoList);
     return (
     <>
         <GlobalStyle />

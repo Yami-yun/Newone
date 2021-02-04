@@ -15,7 +15,7 @@ const Whole = styled.section`
     display: flex;
     justify-content:flex-end;
     align-items: center;
-    /* border : 1px solid blue; */
+
     ${media.phone}{
         width: 100px;
         height: 40px;
@@ -48,7 +48,6 @@ const PersonalIconImg = styled.img`
 `;
 
 const PersonalMenuBox = styled.ul`
-    /* padding: 4px 0; */
     position: absolute;
     top: 48px;
     left: -80px;
@@ -66,20 +65,16 @@ const PersonalMenuBox = styled.ul`
 `;
 
 const AlarmBox = styled.div`
-    /* padding: 4px 0; */
     position: absolute;
     top: 52px;
     left: -410px;
     width: 500px;
     height: 240px;
     z-index:10;
-    /* border :5px solid #afafaf; */
-
     overflow-y: auto;
-
-
     box-shadow: 2px 2px 3px 1px #9e9e9e;
     background: #f7fafa; 
+
     ${media.tablet}{
         left: -270px;
         width: 360px;
@@ -110,19 +105,20 @@ const PersonalMenuItem = styled.li`
     color: #38b6ff;
 `;
 
-
+// Header 안에 우측에 아이콘 리스트 컴포넌트
 function HeaderIconList({userData}:any) {
 
     const [isPersonalMenu, setIsPersonalMenu] = useState<boolean>(false);       // 메뉴 클릭 여부 상태 변수
-    const [isLogin, setIsLogin] = useState<boolean>(false);
-    const [isShowAlarm, setIsShowAlarm] = useState<boolean>(false);
+    const [isLogin, setIsLogin] = useState<boolean>(false);                     // 로그인 여부 상태 변수
+    const [isShowAlarm, setIsShowAlarm] = useState<boolean>(false);             // 알람 아이콘 클릭 여부
     const dispatch = useDispatch();
 
     useEffect(() => {
         setIsLogin(userData?.isAuth);
     }, [userData]);
 
-    const logout = () => {
+    // 로그아웃 아이콘 클릭 시, 로그아웃 실행.
+    const logout = ():void => {
         logoutUser().then(
             response => {
                 dispatch(response);
@@ -132,21 +128,21 @@ function HeaderIconList({userData}:any) {
         setIsPersonalMenu(false);
     };
 
-    const showAlarm = () => {
-        console.log("ALARM");
+    // 알람 아이콘 클릭 시, 알람 창을 보여준다.
+    const showAlarm = ():void => {
         setIsShowAlarm(!isShowAlarm);
         setIsPersonalMenu(false);
-        console.log(window.innerWidth);
     };
 
     // 헤더에서 개인 이미지 버튼 클릭시 미니 메뉴 버튼 on / off
-    const showPersonalMenu = () => {
-        console.log("SHOW PERSONAL INFO");
+    const showPersonalMenu = ():void => {
         setIsPersonalMenu(!isPersonalMenu);
         setIsShowAlarm(false);
     };
 
-    const timeCheck = (date:any) => {
+    // 서버에서 가져온 알람 데이터 생성 시간이 현재 시간으로부터 얼마나 지났는지 계산해서 반환
+    const timeCheck = (date:string):string => {
+        
         const _y = Number(date.slice(0,4));
         const _mon = Number(date.slice(5,7));
         const _d = Number(date.slice(8,10));
@@ -165,9 +161,11 @@ function HeaderIconList({userData}:any) {
         if(d !== _d) return ` (${d-_d} 일 전)`;
         if(h !== _h) return ` (${h-_h} 시간 전)`;
         if(min !== _min) return ` (${min-_min} 분 전)`;
+        return "";
     };
 
-    const strCheck = (str:string) =>{
+    // 알람 내용이 알람창보다 클 경우 ... 형태로 줄인다.
+    const strCheck = (str:string):string =>{
         if(window.innerWidth > 1000) return (str.length < 32 ? str.slice(0,32) : str.slice(0,32) + "...");
         else if(window.innerWidth > 498) return (str.length < 25 ? str.slice(0,25) : str.slice(0,25) + "...");
         else return (str.length < 16 ? str.slice(0,16) : str.slice(0,16) + "...");

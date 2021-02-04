@@ -91,10 +91,8 @@ const PersonalImgBox = styled.article`
 const PersonalImg = styled.img`
     width: 100%;
     height: 100%;
-    /* margin-right: 44px; */
 
     border-radius: 75px;
-
     object-fit: 'contain';
     cursor: pointer;
 `;
@@ -103,20 +101,21 @@ function PersonalModify(){
 
     const userData = useSelector(state => state.user.auth);
     // upper : 개인페이지 상단 이미지 경로, personal: 개인 페이지 160 x 160 원형 이미지 경로
-    const [upperPhoto, setUpperPhoto] = useState<{path:String, name:String}>({path:"", name:""});
-    const [preUpperPhoto, setPreUpperPhoto] = useState<{path:String, name:String}>({path:"", name:""});
+    const [upperPhoto, setUpperPhoto] = useState<{path:string, name:string}>({path:"", name:""});
+    const [preUpperPhoto, setPreUpperPhoto] = useState<{path:string, name:string}>({path:"", name:""});
 
-    const [personalPhoto, setPersonalPhoto] = useState<{path:String, name:String}>({path:"", name:""});
-    const [prePersonalPhoto, setPrePersonalPhoto] = useState<{path:String, name:String}>({path:"", name:""});
+    const [personalPhoto, setPersonalPhoto] = useState<{path:string, name:string}>({path:"", name:""});
+    const [prePersonalPhoto, setPrePersonalPhoto] = useState<{path:string, name:string}>({path:"", name:""});
     
-    const [authorName, setAuthorName] = useState("");
-    const [instruction, setInstruction] = useState("");
-    const [homepage, setHomepage] = useState("");
-    const [twitter, setTwitter] = useState("");
+    const [authorName, setAuthorName] = useState<string>("");
+    const [instruction, setInstruction] = useState<string>("");
+    const [homepage, setHomepage] = useState<string>("");
+    const [twitter, setTwitter] = useState<string>("");
 
 
     const history = useHistory();
     
+    // 프로필 변경 페이지에서 현재 자신의 프로필 내용 상태변수에 넣는다.
     useEffect(() => {
         setAuthorName(userData?.authorName);
         setInstruction(userData?.instruction);
@@ -128,8 +127,8 @@ function PersonalModify(){
         setPersonalPhoto({path:userData?.personalImgPath, name:userData?.personalImgName});
         setPrePersonalPhoto({path:userData?.personalImgPath, name:userData?.personalImgName});
     }, [])
-    
 
+    // react dropzone library
     const onDrop = useCallback(acceptedFiles => {
 
         const formData = new FormData();
@@ -162,16 +161,16 @@ function PersonalModify(){
     const {getRootProps, getInputProps, isDragActive} = useDropzone({onDrop});
 
     // set user author name 
-    const onAuthorNameHandler = (e:any) => { setAuthorName(e.target.value); };
+    const onAuthorNameHandler = (e: React.ChangeEvent<HTMLInputElement>) => { setAuthorName(e.target.value); };
 
     // set user instruction
-    const onInstructionHandler = (e:any) => { setInstruction(e.target.value); };
+    const onInstructionHandler = (e:React.ChangeEvent<HTMLTextAreaElement>) => { setInstruction(e.target.value); };
 
     // set user personal home page
-    const onHompageHandler = (e:any) => { setHomepage(e.target.value); };
+    const onHompageHandler = (e:React.ChangeEvent<HTMLInputElement>) => { setHomepage(e.target.value); };
 
     // set user twitter page
-    const onTwitterHandler = (e:any) => { setTwitter(e.target.value); };
+    const onTwitterHandler = (e:React.ChangeEvent<HTMLInputElement>) => { setTwitter(e.target.value); };
 
     const onPersonalImgHandler = (e:any) => {
         const fileData = e.target.files[0];
@@ -202,7 +201,8 @@ function PersonalModify(){
         }
     };
 
-    const onPersonalDataSubmit = (e:any) => {
+    // 프로필 변경 내용 서버로 전송
+    const onPersonalDataSubmit = (e:React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
 
         if(!authorName) return alert("작가 명을 입력해주세요.");
@@ -223,7 +223,6 @@ function PersonalModify(){
         modifiedPersonalInfo(body).then(
             response => {
                 // 데이터 변경 사항이 success 되면 개인 페이지로 이동
-                console.log(response.payload);
                 if(response.payload.success){
                     history.push(`/personal/${userData.key}`);
                 }else{
@@ -232,7 +231,7 @@ function PersonalModify(){
             });
     };
 
-
+    // 프로필 이미지
     const personalImg = () => {
         if(personalPhoto?.path){
             // 사용자가 이미지를 변경했다면

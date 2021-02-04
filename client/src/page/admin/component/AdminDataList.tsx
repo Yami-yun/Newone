@@ -4,9 +4,6 @@ import GlobalStyle from 'globalStyles';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSearch } from '@fortawesome/free-solid-svg-icons';
 
-
-const Whole=styled.section``;
-
 const DataLayout=styled.section`
     width: 900px;
     margin: 0 auto;
@@ -90,15 +87,25 @@ const PagingBtn = styled.button`
     color: #000000;
 `;
 
-function AdminDataList({onDeleteHandler, data, type, title}:any){
+interface Props{
+    onDeleteHandler(authorName:string) :void,
+    data:any,
+    type:"USER" | "PHOTO",
+    title: string,
+}
+
+// 관리자 페이지에서 작가, 작품 리스트를 보여주는 컴포넌트
+function AdminDataList({onDeleteHandler, data, type, title}:Props){
 
     const [searchTxt, setSearchTxt] = useState<string>("");         // 검색한 단어
     const [isSearch, setIsSearch] = useState<boolean>(false);       // 검색 버튼 클릭 여부
     const SHOW_MAX_DATA = 10;                                       // 한 페이지에 보여지는 유저 데이터 갯수
     const [paging, setPaging] = useState<number>(1);                // 데이터 리스트 페이징
 
+    // 리스트 페이징 핸들러
     const onPagingHandler = (dir:string) => {
         if(dir === "LEFT"){
+            // 왼쪽 버튼 클릭 시,
             if(paging !== 1) setPaging(paging - 1);
         }else{
             if(paging !== Math.ceil(data?.length / SHOW_MAX_DATA) ) setPaging(paging + 1);
@@ -123,6 +130,7 @@ function AdminDataList({onDeleteHandler, data, type, title}:any){
                 <SearchBtn onClick={()=>setIsSearch(true)}><FontAwesomeIcon icon={faSearch} size="sm" style={{color:"#33ffff"}}/></SearchBtn>
             </SearchBox>
             
+            {/* 리스트 상단 항목 */}
             <TabList>
             {type === "PHOTO" && <Tab style={{width:"50%"}}>작품명</Tab>}
                 <Tab style={{width:"20%"}}>작가명</Tab>
@@ -132,6 +140,7 @@ function AdminDataList({onDeleteHandler, data, type, title}:any){
                 {type === "USER" && <Tab style={{width:"10%"}}>팔로워 수</Tab>}
             </TabList>
 
+            {/* 리스트 내용 */}
             <DataList>
                 {data && data.map((tmp:any, index:number)=>{
                     if(((searchTxt !== tmp.authorName) && (searchTxt !== tmp?.title)) && isSearch) return;
@@ -151,6 +160,7 @@ function AdminDataList({onDeleteHandler, data, type, title}:any){
                 )}
             </DataList>
 
+            {/* 리스트 바텀 영역, 페이징 버튼, 현재 페이지 넘버 */}
             <DataListBottom>
                 <PagingBtn onClick={()=>{onPagingHandler("LEFT");}} >‹</PagingBtn>
                 <PagingTxt>{` ${paging} / ${Math.ceil(data?.length / SHOW_MAX_DATA)} `}</PagingTxt>

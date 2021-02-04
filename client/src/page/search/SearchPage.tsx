@@ -3,12 +3,11 @@ import styled from 'styled-components';
 import GlobalStyle from 'globalStyles';
 import { useParams } from 'react-router-dom';
 import Header from 'component/Header';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import SearchList from 'page/search/material/SearchList';
 import { searchPhoto, searchTag } from 'redux/actions/photoAction';
 import { searchAuthor } from 'redux/actions/userAction';
 import Footer from 'component/Footer';
-
 
 const Whole=styled.section``;
 
@@ -18,7 +17,6 @@ const TopLayout=styled.section`
     display: flex;
     flex-direction: column;
     align-items: center;
-    
 `;
 
 const BottomLayout=styled.section`
@@ -32,30 +30,33 @@ const PageLayout=styled.section`
     background: #ffffff;
     padding-bottom: 95px;
 `;
+
+// 검색 결과 화면 컴포넌트
 function SearchPage(){
     const {text} = useParams<{text:string}>();
     const userData = useSelector(state => state.user.auth);
+    const dispatch = useDispatch();
     const [searchPhotoList, setSearchPhotoList] = useState<any>(null);
     const [searchAuthorList, setSearchAuthorList] = useState<any>(null);
     const [searchTagList, setSearchTagList] = useState<any>(null);
-
 
     useEffect(() => {
         searchPhoto(text).then(
             response=> {
                 if(response.payload.success) setSearchPhotoList(response.payload.result);
+                dispatch(response);
             });
 
         searchAuthor(text).then(
             response=> {
-                console.log(response);
                 if(response.payload.success) setSearchAuthorList(response.payload.result);
+                dispatch(response);
             });
 
         searchTag(text).then(
             response=> {
-                console.log(response);
                 if(response.payload.success) setSearchTagList(response.payload.result);
+                dispatch(response);
             });
 
     }, [text]);

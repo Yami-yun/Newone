@@ -61,6 +61,7 @@ interface Props{
     famousTagList:{_id:string, count:number}[],
 };
 
+// 랜덤 스타일 테그 리스트 컴포넌트
 export default function RandomTagStyle({famousTagList}:Props){
     const history = useHistory();
     shuffle(color);

@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import styled, {css} from 'styled-components';
 import GlobalStyle from 'globalStyles';
-import { setPhotoNew, getIsNew } from 'redux/actions/photoAction';
+import { setPhotoNew } from 'redux/actions/photoAction';
 import {useDispatch} from 'react-redux';
 import {SERVER_PATH, CLIENT_PATH} from 'config/path';
 import defaultImg from 'img/defaultPersonalImg.png';
@@ -58,7 +58,6 @@ const PersonalImg = styled.img`
     margin-left:10px;
 
     background: #FFFFFF;
-    /* border: 1px solid #00A0FF; */
     border-radius: 18px;
 `;
 
@@ -110,7 +109,14 @@ const ImgDescriptionBottom = styled.div`
     }
 `;
 
-function ImgDescription({photoInfo, setIsNew, isNew, authorInfo}:any){
+interface Props{
+    photoInfo:any,
+    setIsNew(isNew:boolean):void,
+    isNew:boolean,
+    authorInfo:any,
+};
+// 작품 설명 박스 컴포넌트 
+function ImgDescription({photoInfo, setIsNew, isNew, authorInfo}:Props){
     const dispatch = useDispatch();
 
     // New btn 클릭 시, 해당 포토에 new 개수증가 
@@ -122,9 +128,7 @@ function ImgDescription({photoInfo, setIsNew, isNew, authorInfo}:any){
         }
         setPhotoNew(body).then(
             response => {
-                if(response.payload.success){
-                    dispatch(response);
-                }
+                dispatch(response);
             });
     };
 

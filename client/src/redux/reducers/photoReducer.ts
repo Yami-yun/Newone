@@ -8,15 +8,18 @@ import {
     MODIFY_PHOTO,
     SET_NEW_PHOTO,
     GET_IS_NEW_PHOTO,
+    GET_RECOMMEND_PHOTO,
+    GET_TODAY_LANK,
+    GET_FAMOUS_TAG_LIST,
+    GET_RECENT_PHOTO,
+    SEARCH_PHOTO,
+    SEARCH_TAG,
 } from 'redux/actions/types';
 
 
 export default function(state={}, action:any){
     switch(action.type){
         case ADD_PHOTO:
-            // let cmp = state[photoTagList].concat(action.data.tag);
-            // state = {...state, photoTageList : [] };
-
             return {...state, addPhoto: action.payload};
 
         case GET_INFO_PHOTO:
@@ -42,6 +45,25 @@ export default function(state={}, action:any){
 
         case GET_IS_NEW_PHOTO:
             return {...state, getIsNewPhoto: action.result};
+
+        case GET_RECOMMEND_PHOTO:
+            return {...state, getRecommendPhoto: action.result};
+
+        case GET_TODAY_LANK:
+            return {...state, getTodayLank: action.result};
+
+        case GET_FAMOUS_TAG_LIST:
+            return {...state, getFamousTagList: action.result};
+
+        case GET_RECENT_PHOTO:
+            return {...state, getRecentPhoto: action.result};
+
+        case SEARCH_PHOTO:
+            return {...state, searchPhoto: action.result};
+
+        case SEARCH_TAG:
+            return {...state, searchTag: action.result};
+
         default:
             return state;
     }

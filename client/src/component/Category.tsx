@@ -15,9 +15,6 @@ const Whole = styled.nav`
         width: 300px;
     }
 
-    /* ${media.mini}{
-        width: 320px;
-    } */
 `;
 
 const NavList = styled.ul`
@@ -41,11 +38,12 @@ const NavListItem = styled.li`
     }
 `;
 
-function Category({setCategory}: any) {
+interface Props{
+    setCategory(category:number):void,
+}
 
-    const moveCategory = (category: string) => {
-        console.log(category);
-    }
+// Main page 상단에 들어가는 category 컴포넌트
+function Category({setCategory}: Props) {
     return (
         <Whole>
             <NavList>

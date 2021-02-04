@@ -25,11 +25,12 @@ import {
     PhotoFormType  
 } from './component/UploadUI';
 
+// 작품 변경 페이지 컴포넌트
 function PhotoModify(){
-    const [uploadForm, setUploadForm] = useState<UploadFormType>(initUploadForm);
-    const [photoForm, setPhotoForm] = useState<PhotoFormType>(initPhotoForm);
+    const [uploadForm, setUploadForm] = useState<UploadFormType>(initUploadForm);       // 서버로 보낼 업로드 폼
+    const [photoForm, setPhotoForm] = useState<PhotoFormType>(initPhotoForm);           // 이미지 드롭존으로 받은 이미지 정보
 
-    const [isPhotoChange, setIsPhotoChange] = useState<boolean>(false);
+    const [isPhotoChange, setIsPhotoChange] = useState<boolean>(false);                 // 작품 사진 변경 여부 상태 변수
     const disPatch = useDispatch();
     const history = useHistory();
 
@@ -56,6 +57,7 @@ function PhotoModify(){
                             photoName: result.photoName,
                         });
                 }
+                disPatch(response);
             })
     }, []);
 
@@ -99,13 +101,13 @@ function PhotoModify(){
     const {getRootProps, getInputProps, isDragActive} = useDropzone({onDrop});
 
     // set image title
-    const onTitleHandler = (e:any) => { setUploadForm({...uploadForm, title : e.target.value}); };
+    const onTitleHandler = (e:React.ChangeEvent<HTMLInputElement>) => { setUploadForm({...uploadForm, title : e.target.value}); };
 
     // set image description
-    const onDescriptionHandler = (e:any) => { setUploadForm({...uploadForm, description : e.target.value}); };
+    const onDescriptionHandler = (e:React.ChangeEvent<HTMLTextAreaElement>) => { setUploadForm({...uploadForm, description : e.target.value}); };
 
     // set image tag
-    const onTagHandler = (e:any) => { setUploadForm({...uploadForm, tag : e.target.value}); };
+    const onTagHandler = (e:React.ChangeEvent<HTMLInputElement>) => { setUploadForm({...uploadForm, tag : e.target.value}); };
 
     // image 태그 추가 핸들러
     const addTagHandler = (e:any) => {
@@ -118,7 +120,7 @@ function PhotoModify(){
     };
 
     // set image type
-    const onPhotoTypeHandler = (e:any, _type: number) =>{
+    const onPhotoTypeHandler = (e:React.MouseEvent<HTMLButtonElement, MouseEvent>, _type: number) =>{
         e.preventDefault();
         setUploadForm({...uploadForm, photoType: _type });
     };
@@ -145,14 +147,13 @@ function PhotoModify(){
         
         modifyPhoto(body).then(
             response => {
-                console.log(response);
                 if(response.payload.success){
                     // 서버로 전송 성공 시, 개인 페이지로 이동
-                    disPatch(response);
                     history.push(`/personal/${userData.key}`);
                 } else {
                     alert("DB 저장에 실패했습니다.")
                 }
+                disPatch(response);
             }
         );
 

@@ -4,7 +4,7 @@ import GlobalStyle from 'globalStyles';
 import {InputBox} from 'component/input';
 import { VerifyBtn } from 'component/button';
 import { getVerifiedCode, registerUser } from 'redux/actions/userAction';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Link } from 'react-router-dom';
@@ -114,22 +114,24 @@ function Register(){
     };
 
     // email, password, 2차 password, authorname state 저장
-    const onEmailHandler = (e:any) => { setRegisterForm({...registerForm, email: e.target.value}); };
-    const onPasswordHandler = (e:any) => { setRegisterForm({...registerForm, password: e.target.value}); };
-    const onConfirmPasswordHandler = (e:any) => { setRegisterForm({...registerForm, confirmPassword: e.target.value}); };
-    const onAuthorNameHandler = (e:any) => { setRegisterForm({...registerForm, authorName: e.target.value});  };
-    const onVerifiedCodeHandler = (e:any) => { setVerifiedCode(e.target.value);  };
+    const onEmailHandler = (e:React.ChangeEvent<HTMLInputElement>) => { setRegisterForm({...registerForm, email: e.target.value}); };
+    const onPasswordHandler = (e:React.ChangeEvent<HTMLInputElement>) => { setRegisterForm({...registerForm, password: e.target.value}); };
+    const onConfirmPasswordHandler = (e:React.ChangeEvent<HTMLInputElement>) => { setRegisterForm({...registerForm, confirmPassword: e.target.value}); };
+    const onAuthorNameHandler = (e:React.ChangeEvent<HTMLInputElement>) => { setRegisterForm({...registerForm, authorName: e.target.value});  };
+    const onVerifiedCodeHandler = (e:React.ChangeEvent<HTMLInputElement>) => { setVerifiedCode(e.target.value);  };
 
     // 인증 번호를 보낸다.
-    const onSendVerifiedNumberHandler = (e:any) => { 
+    const onSendVerifiedNumberHandler = (e:React.MouseEvent<HTMLButtonElement, MouseEvent>) => { 
         e.preventDefault();
         if(!emailCheck(registerForm.email)) return alert('이메일 형식이 아닙니다.');
 
+        // 유저가 인증번호를 수신함
         setIsVerified(1);
 
         getVerifiedCode({email: registerForm.email, str: "회원가입"}).then(
         response=> {
             if(response.payload.success) setCheckVerifiedCode(response.payload.verificationNumber.toString());
+            dispatch(response);
         });
 
         return alert('인증 번호가 발송되었습니다.');
@@ -173,7 +175,6 @@ function Register(){
         // 서버로 회원가입 형식 보냄
         registerUser(body)
         .then(response => {
-            console.log(response);
             if (response.payload.success) {
                 dispatch(response);
                 history.push("/login");
@@ -188,6 +189,7 @@ function Register(){
         });
     };
 
+    // 인증 상태에 따른 인증 번호 버튼 UI 변경 함수
     const VerifyUI = () => {
         if(isVerified === 0) {
             return <VerifyBtn type="button" onClick={onSendVerifiedNumberHandler}>인증번호 받기</VerifyBtn>;

@@ -1,6 +1,8 @@
 import styled from 'styled-components';
 import { media } from 'component/customMediaQuery';
 
+// 작품 업로드와 변경 페이지 관한 재활용성 component들
+
 // 상단 레이아웃 (헤더 카테고리 hr)
 export const TopLayout=styled.section`
     padding: 20px 0;

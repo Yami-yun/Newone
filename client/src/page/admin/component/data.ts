@@ -1,3 +1,5 @@
+
+// 차트 더미 데이터 생성
 export function getChartData():{
     date: string;
     count: number;
@@ -19,6 +21,6 @@ export function getChartData():{
         }
         mon += 1;
     }
-    console.log(result);
+
     return result;
 };

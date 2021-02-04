@@ -18,6 +18,7 @@ const Whole = styled.div`
     }
 `;
 
+// 하단 푸터 컴포넌트
 function Footer(){
     return (
     <>

@@ -7,7 +7,7 @@ import LankingList from 'page/main/material/LankingList';
 import FamousTagList from 'page/main/material/FamousTagList';
 import RecentWorkList from 'page/main/material/RecentWorkList';
 import Footer from 'component/Footer';
-import { useSelector } from'react-redux';
+import { useSelector, useDispatch } from'react-redux';
 import { getRecentPhoto, getTodayLank, getFamousTag } from 'redux/actions/photoAction';
 
 const TopLayout=styled.section`
@@ -35,29 +35,41 @@ const PageLayout=styled.section`
     background: #ffffff;
 `;
 
+// 메인 화면 컴포넌트
 function Main(){
     const userData = useSelector(state => state.user.auth);
-    const [recentPhotoList, setRecentPhotoList] = useState<any>([]);
-    const [lankList, setLankList] = useState<any>([]);
-    const [famousTagList, setFamousTagList] = useState<any>([]);
-    const [category, setCategory] = useState<number>(0);
+    const [recentPhotoList, setRecentPhotoList] = useState<any>([]);                                // 최근 작품 리스트 상태 변수
+    const [lankList, setLankList] = useState<any>([]);                                              // 금일 작품 랭킹 리스트 상태 변수
+    const [famousTagList, setFamousTagList] = useState<{_id:"string", count:number}[]>([]);         // 인기 태그 리스트 상태 변수
+    const [category, setCategory] = useState<number>(0);                                            // 선택된 카테고리 상태 변수
+    const dispatch = useDispatch();
 
+    // 카테고리에 따른 최근 작품, 오늘의 랭킹, 인기 태그를 가져온다.
     useEffect(() => {
 
         getRecentPhoto(category).then(
             response => {
-                if(response.payload.success) setRecentPhotoList(response.payload.result);
+                if(response.payload.success){
+                    setRecentPhotoList(response.payload.result);
+                    dispatch(response);
+                }
             });
 
-            getTodayLank().then(
-                response => {
-                    if(response.payload.success) setLankList(response.payload.result);
-                });
+        getTodayLank().then(
+            response => {
+                if(response.payload.success){
+                    setLankList(response.payload.result);
+                    dispatch(response);
+                }
+            });
 
-            getFamousTag().then(
-                response => {
-                    if(response.payload.success) setFamousTagList(response.payload.result);
-                });
+        getFamousTag().then(
+            response => {
+                if(response.payload.success){
+                    setFamousTagList(response.payload.result);
+                    dispatch(response);
+                }
+            });
 
     }, [category]);
 

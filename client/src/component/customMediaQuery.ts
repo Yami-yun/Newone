@@ -1,7 +1,7 @@
 
 
-
-export const media = {
+// 반응형 웹페이지를 위한 media query size 정의 스크립트
+export const media:{tablet:string, phone: string, mini:string} = {
 
     //ipad
     tablet: '@media (max-width: 1000px)',

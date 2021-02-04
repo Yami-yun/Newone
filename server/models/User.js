@@ -4,6 +4,7 @@ const jsonwebtoken = require('jsonwebtoken');
 const saltRounds = 10;
 const moment = require("moment");
 
+// 유저정보 스키마
 const userSchema = mongoose.Schema({
     key:{
         type: Number,
@@ -32,10 +33,6 @@ const userSchema = mongoose.Schema({
         type:Number,
         default: 0 
     },
-    // photo: {                        // 등록된 자신 이미지의 주소, 정보를 담는 배열, 미정
-    //     type:Array,
-    //     default:[],
-    // },
     photo:[new mongoose.Schema({path: String, name: String, type: Number, id: String})],            // 자신이 창작한 작품 이미지 db
     personalImgName: {
         type:String,
@@ -106,7 +103,6 @@ userSchema.pre('save', function(next){
         // 다른 사항을 넣을 때, 그냥 저장한다.
         next();
     }
-
 });
 
 
@@ -157,5 +153,3 @@ userSchema.statics.findByToken = function(token, cb){
 const User = mongoose.model('User', userSchema);
 
 module.exports = { User };
-
-// export{};

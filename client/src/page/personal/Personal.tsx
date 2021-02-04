@@ -40,7 +40,7 @@ function Personal(){
     const [personalInfo, setPersonalInfo] = useState<any>(null);
     const status = useSelector(state => state.photo);
     
-    console.log(status);
+    console.log(personalInfo);
 
     useEffect(() => {
         const body = {
@@ -67,9 +67,9 @@ function Personal(){
         <BottomLayout>
             <PageLayout>
                 {/* // 여기서부터 페이지 내용 */}
-                <UpperImg personalInfo={personalInfo} userData={userData} />
-                <PersonalInfo personalInfo={personalInfo} userData={userData} />
-                <BottomImgList personalInfo={personalInfo} userData={userData} />
+                <UpperImg personalInfo={personalInfo} />
+                <PersonalInfo personalInfo={personalInfo} />
+                <BottomImgList personalInfo={personalInfo} />
             </PageLayout>
         </BottomLayout>
         <Footer />

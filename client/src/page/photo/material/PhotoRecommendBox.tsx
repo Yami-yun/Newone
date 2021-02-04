@@ -54,6 +54,7 @@ const RecommendPhoto = styled.img`
     }
 `;
 
+// 작품 추천 리스트 컴포넌트
 function PhotoRecommendBox({recommendPhotoList}:any){
     return (
     <>

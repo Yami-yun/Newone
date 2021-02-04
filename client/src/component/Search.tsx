@@ -14,8 +14,6 @@ const Whole = styled.article`
     justify-content: center;
     align-items: center;
 
-    /* border: 1px solid; */
-
     ${media.tablet}{
         width: 230px;
     }
@@ -47,22 +45,28 @@ const SearchBtn = styled.button`
     font-size: 1.8rem;
 `;
 
+// 헤더에 들어가는 서치바 컴포넌트
 function Search() {
 
     const params= useParams<{text:string}>();               //  검색한 단어
     const history = useHistory();
-    const [searchText, setSearchText] = useState<string>("")
+    const [searchText, setSearchText] = useState<string>("");           // 검색 input text
 
     useEffect(() => {
+
+        // 검색을 실행할때마다, 검색 input default text 변경
         setSearchText(params.text);
     }, [params])
 
-    const onInput = (e: any) => { setSearchText(e.target.value); };
+    // 검색 input text state 변경
+    const onInput = (e: React.ChangeEvent<HTMLInputElement>) => { setSearchText(e.target.value); };
 
-    const onSearchSubmit = (e:any) => {
+    // 검색한 단어로 페이지 이동
+    const onSearchSubmit = (e:React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         history.push(`/search/${searchText}`);          // 검색 페이지로 이동
     };
+
     return (
         <Whole>
             <SearchBox onSubmit={onSearchSubmit}>

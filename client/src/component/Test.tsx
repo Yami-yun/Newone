@@ -20,7 +20,7 @@ const Parent = styled.div`
 `;
 
 
-
+// 테스트용 페이지입니다.
 function Test(){
     return (
     <>

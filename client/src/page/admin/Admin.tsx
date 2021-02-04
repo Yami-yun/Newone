@@ -4,7 +4,7 @@ import GlobalStyle from 'globalStyles';
 import Header from 'component/Header';
 import Footer from 'component/Footer';
 import AdminDataList from './component/AdminDataList';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { getData, getAllUserData, deleteUserInfo, getAllPhotoData, deletePhotoInfo } from 'redux/actions/adminAction';
 import { getChartData } from './component/data';
 import {
@@ -57,19 +57,7 @@ const ChartTitle=styled.h1`
 `;
 
 function Admin(){
-    let testData: { authorName: string; email: string; createDate: string; follow: string[]; follower: string[]; }[] = [
-    ];
-
-    for(let i=0; i<20; i++){
-        testData.push({
-            authorName: `test${i}`,
-            email: "test@naver.com",
-            createDate: "2020-01-02",
-            follow: ["3"],
-            follower: ["4"],
-        });
-    }
-    
+    const dispatch = useDispatch();
     const userData = useSelector(state => state.user.auth);             // 현재 등록한 유저 정보
     const [visitorData, setVisitorData] = useState<any>();              // api로부터 가져온 일일 방문자 수 데이터
     const [allUserData, setAllUserData] = useState<any>();
@@ -106,7 +94,7 @@ function Admin(){
     const onDeletePhotoInfoHandler = (_id:string) => {
         // 유저정보 삭제
         const result = window.confirm("[주의!] 해당 작품 정보를 삭제하겠습니까?");
-        console.log(_id);
+
         if(result){
             deletePhotoInfo({_id:_id}).then(
             response => {
@@ -130,24 +118,29 @@ function Admin(){
         if(canvas) ctx = canvas.getContext('2d');
 
         if(ctx){
-            const maxY = 1000;
-            const offset = {x: 60, y: 50};
-            const barGapW = 40;
-            const xDataLen = 10;
-            const yCount = 6;
+            
+            const offset = {x: 60, y: 50};          // 그래프 시작 위치
+            const barGapW = 40;                     // 막대 사이 간격
+            const xDataLen = 10;                    // x축 막대 갯수
+            const yCount = 6;                       // y축 실선 갯수
 
             const w = GetBarW({offset: offset, barGapW: barGapW, xDataLen:xDataLen });
 
-            // y축 숫자의 최대값 가져오기
+            // y축 숫자의 최대 자리 수 가져오기
             let maxCount = 0;
             chartData.forEach((value)=>{
                 let tmp = value.count.toString().length;
-                if(maxCount < tmp) maxCount = tmp;
+                if(maxCount < tmp){
+                    maxCount = tmp;
+                }
             })
+
+            const maxY = Math.pow(10, maxCount);            // y축 최대 값
 
             //Y축 숫자
             ctx.clearRect(0, 0, canvasW, canvasH);
 
+            // y축 단위 생성
             let digit = "";
             let digitIndex = 0;
             const digitList = ["백", "천", "만", "백만"];
@@ -165,7 +158,7 @@ function Admin(){
                 digitIndex = 2;
             }
 
-            // x 축
+            // 그래프 실선 render
             for(let i=0; i< yCount; i++){
                 
                 Line({ctx: ctx, x: offset.x, y: offset.y + (canvasH - 2 * offset.y) / (yCount - 1) * i, 
@@ -181,13 +174,13 @@ function Admin(){
                 Text({ctx: ctx, x: offset.x - 40, y: offset.y + (canvasH - 2 * offset.y) / (yCount - 1) * i, text: _text, size: 12});
             }
 
-            // 막대
+            // 막대 render
             for(let i=0; i< xDataLen; i++){
                 Rect({ctx: ctx, x: offset.x + i * (w + barGapW), y: offset.y, 
                     w: w, h: chartData[i].count / maxY * (canvasH -2 * offset.y), c: "#7daef8"});
             }
 
-            // x 축 날짜
+            // x 축 날짜 render
             for(let i=0; i< xDataLen; i++){
                 Text({ctx: ctx, x: offset.x + i * (w + barGapW), y: offset.y - 24, text: chartData[i].date.slice(5,10), size: 12});
             }
@@ -196,23 +189,36 @@ function Admin(){
     }
     
     useEffect(() => {
+        // 방문자 수 데이터 불러오기 api
         getData().then(
             response => {
-                if(response.payload.success) setVisitorData(response.payload.result);
+                if(response.payload.success){
+                    setVisitorData(response.payload.result);
+                    dispatch(response);
+                }
             });
 
-            getAllUserData().then(
-                response => {
-                    if(response.payload.success) setAllUserData(response.payload.result);
-                });
+        // 모든 유저 데이터 불러오기 api
+        getAllUserData().then(
+            response => {
+                if(response.payload.success)
+                {
+                    setAllUserData(response.payload.result);
+                    dispatch(response);
+                }
+            });
 
-            getAllPhotoData().then(
-                response => {
-                    if(response.payload.success) setAllPhotoData(response.payload.result);
-                    console.log(response.payload.result);
-                });
+        // 모든 작품 데이터 불러오기 api
+        getAllPhotoData().then(
+            response => {
+                if(response.payload.success){
+                    setAllPhotoData(response.payload.result);
+                    dispatch(response);
+                }
+            });
 
-            drawGraph();
+        // 그래프 그리기
+        drawGraph();
 
     }, []);
     return (
@@ -224,24 +230,17 @@ function Admin(){
         <BottomLayout>
             {/* 여기서부터 Page 내용 */}
             <PageLayout>
-                {/* admin main */}
-
                 {/* // 10일 동안 일일 방문자 수 그래프*/}
                 <ChartBox>
                     <ChartTitle>일일 방문자 수 그래프</ChartTitle>
-                    {/* <Chart width={`$(canvasW)`} height={`$(canvasH)`} ref={canvasRef}/> */}
                     <Chart width="800" height="520" ref={canvasRef}/>
                 </ChartBox>
-                {/* 일일 작가 등록 수 그래프 */}
-                {/* 일일 작품 등록 수 */}
 
                 {/* 작가 관리 섹션 */}
                 <AdminDataList title={"가입한 작가 목록 리스트"} data={allUserData} onDeleteHandler={onDeleteUserInfoHandler} type={"USER"}/>
 
                 {/* 작품 관리 섹션 */}
                 <AdminDataList title={"등록한 작품 목록 리스트"} data={allPhotoData} onDeleteHandler={onDeletePhotoInfoHandler} type={"PHOTO"}/>
-
-                <section></section>
             </PageLayout>
         </BottomLayout>
         <Footer />

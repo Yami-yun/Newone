@@ -6,7 +6,7 @@ import ImgDescription from 'page/photo/material/ImgDescription';
 import AuthorImgList from 'page/photo/material/AuthorImgList';
 import PhotoRecommendBox from './material/PhotoRecommendBox';
 import Comment from 'page/photo/material/Comment';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { useParams, useHistory } from 'react-router-dom';
 import { getPhotoInfo, getAuthorInfo, getIsNew, getRecommendPhoto } from 'redux/actions/photoAction';
 import { SERVER_PATH } from 'config/path';
@@ -81,8 +81,8 @@ const PhotoBottomPage = styled.section`
 function Photo(){
     const match = useParams<{id:string}>();
     const history = useHistory();
+    const dispatch = useDispatch();
     const userStatus = useSelector(state => state.user.auth);
-    const photoStatus = useSelector(state => state.photo);
 
     const [photoInfo, setPhotoInfo] = useState<any>(null);                              // 해당 페이지 작품 정보
     const [authorInfo, setauthorInfo] = useState<any>(null);                            // 해당 페이지 작품의 작가 정보
@@ -98,11 +98,11 @@ function Photo(){
         getPhotoInfo(body).then(
             response=> {
                 if(response.payload.result){
-                    console.log(response.payload);
                     setPhotoInfo(response.payload.result);
                     getAuthorInfo({key:response.payload.result.authorKey}).then(
                         response=>{
                             if(response.payload.success) setauthorInfo(response.payload.result);
+                            dispatch(response);
                         }
                     );
                 }
@@ -117,6 +117,7 @@ function Photo(){
         getIsNew({_id: photoInfo?._id}).then(
             response=>{
                 setIsNew(response.payload.result);
+                dispatch(response);
             }
         );
 
@@ -124,9 +125,8 @@ function Photo(){
         getRecommendPhoto(photoInfo?._id, photoInfo?.tagList).then(
             response=>{
                 if(response.payload.success) setRecommendPhotoList(response.payload.result);
+                dispatch(response);
             });
-
-        
 
     }, [isNew]);
 
@@ -142,14 +142,14 @@ function Photo(){
                 <section style={{display: "flex", flexDirection: "column", alignItems: "center", paddingBottom: 95}}>
                     {/* 작품 이미지 */}
                     <PhotoBox>
-                        <img style={{width: "100%", height: "100%", objectFit:"contain"}} src={photoInfo && `${SERVER_PATH}${photoInfo?.photoPath}`} />
+                        <img alt="photo" style={{width: "100%", height: "100%", objectFit:"contain"}} src={photoInfo && `${SERVER_PATH}${photoInfo?.photoPath}`} />
                     </PhotoBox>
 
                     {/* 작품 및 작가 설명, 코멘트 */}
                     <PhotoBottomPage >
                         <ImgDescription authorInfo={authorInfo} photoInfo={photoInfo} setIsNew={setIsNew} isNew={isNew} />
                         <AuthorImgList authorInfo={authorInfo} />
-                        <Comment authorInfo={authorInfo} photoInfo={photoInfo}/>
+                        <Comment photoInfo={photoInfo}/>
                     </PhotoBottomPage>
                 </section>
 

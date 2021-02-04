@@ -1,3 +1,5 @@
-export const SERVER_PATH = 'http://localhost:5000/';
+// 서버 path
+export const SERVER_PATH:string = 'http://localhost:5000/';
 
-export const CLIENT_PATH = 'http://localhost:3000/';
+// Client path
+export const CLIENT_PATH:string = 'http://localhost:3000/';

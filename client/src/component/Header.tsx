@@ -25,8 +25,11 @@ const Whole = styled.header`
     /* border : 1px solid; */
 `;
 
+
+
+// 모든 페이지에 들어가는 Header 컴포넌트 (login, register 는 제외)
 function Header({userData}:any) {
-    
+
     return (
         <>
         <GlobalStyle />

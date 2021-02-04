@@ -6,6 +6,7 @@ import { PhotoBlueBtn } from 'component/button';
 import defaultImg from 'img/defaultPersonalImg.png';
 import { followUser, getIsFollow } from 'redux/actions/userAction';
 import { media } from 'component/customMediaQuery';
+import { useDispatch } from 'react-redux';
 
 const Whole=styled.section`
     width: 738px;
@@ -61,8 +62,9 @@ const ImgBox = styled.img`
     cursor: pointer;
 `;
 
+// 작품 페이지에서 작가 이미지 리스트 컴포넌트
 function AuthorImgList({authorInfo}:any){
-    console.log(authorInfo);
+    const dispatch = useDispatch();
     const [isFollow, setIsFollow] = useState<boolean>(false);
 
     useEffect(() => {
@@ -72,6 +74,7 @@ function AuthorImgList({authorInfo}:any){
                 response=>{
                     if(response.payload.success){
                         setIsFollow(response.payload.result);
+                        dispatch(response);
                     }
                 }
             );

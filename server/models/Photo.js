@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 
-
+// 작품 스키마
 const photoSchema = mongoose.Schema({
     title:{
         type: String,
@@ -38,10 +38,7 @@ const photoSchema = mongoose.Schema({
     authorKey:{
         type:Number,
     },
-
 });
-
-
 
 const PhotoModel = mongoose.model('Photo', photoSchema);
 module.exports = { PhotoModel };

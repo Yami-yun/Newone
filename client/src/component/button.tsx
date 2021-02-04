@@ -1,6 +1,9 @@
 import { media } from 'component/customMediaQuery';
 import styled, { css } from 'styled-components';
 
+// 재활용성이 높은 버튼들을 정의하는 컴포넌트들
+
+// 파란 버튼 UI
 export const BlueBtn = styled.button`
     width: 300px;
     height: 40px;
@@ -22,6 +25,7 @@ export const BlueBtn = styled.button`
     };
 `;
 
+// 회원가입, 비밀번호 찾기 인증 버튼  UI
 export const VerifyBtn=styled.button`
     width: 38%;
     height: 40px;
@@ -50,6 +54,7 @@ export const VerifyBtn=styled.button`
     }
 `;
 
+// 포토 페이지용 파란 버튼  UI
 export const PhotoBlueBtn = styled.button`
     width: 100px;
     height: 38px;
@@ -81,6 +86,7 @@ export const PhotoBlueBtn = styled.button`
     }
 `;
 
+// 하얀색 버튼  UI
 export const WhiteBtn = styled.button<{isClicked?:boolean}>`
     width: 300px;
     height: 40px;
@@ -110,7 +116,5 @@ export const WhiteBtn = styled.button<{isClicked?:boolean}>`
         height: 30px;
         font-size: 0.7rem;
     }
-
-
 
 `;
