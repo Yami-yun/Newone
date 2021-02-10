@@ -115,7 +115,8 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage: storage }).single("file");
 
-router.post('/modified_personal_img', auth , (req, res) => {
+// 변경된 유저 이미지 DB 수정
+router.post('/personal_img', auth , (req, res) => {
     // personal img가 등록되어 있는지 확인
     if(req.user.personalImg){
         // 서버 경로에 img 유무 확인
@@ -166,7 +167,7 @@ router.post('/modified_personal_img', auth , (req, res) => {
 const UPPER_PHOTO_BASE_PATH = `uploads/user/upper/`;
 const PERSONAL_PHOTO_BASE_PATH = `uploads/user/personal/`;
 // 개인 정보 변경
-router.patch('/modified_personal_info', auth, authorNameUnique, (req, res)=>{
+router.patch('/personal_info', auth, authorNameUnique, (req, res)=>{
     // console.log(`[SERVER] [USERS ROUTER] [MODIFIED PERSONAL INFO PATCH] path: ${req?.route?.path}, REQUEST DATA: ${JSON.stringify(req?.body)} `);
 
     let [rbody, ruser] = [req.body, req.user];
@@ -231,7 +232,7 @@ router.patch('/modified_personal_info', auth, authorNameUnique, (req, res)=>{
 });
 
 // 개인 페이지의 유저 정보 반환
-router.post('/get_personal_info', auth, (req, res)=>{
+router.post('/personal_info', auth, (req, res)=>{
     
     let isUser = (parseInt(req.body.key) === req.user.key);
     // 해당 본인 페이지인지 확인

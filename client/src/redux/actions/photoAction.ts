@@ -41,7 +41,7 @@ export async function addPhoto(body:IPhoto){
 
 // 포토 페이지에서 포토 정보 가져오기 api
 export async function getPhotoInfo(body:{photoId:string}){
-    const request = await axios.post(`http://localhost:3000/api/photo/get_photo_info`, body).then(
+    const request = await axios.post(`http://localhost:3000/api/photo/photo_info`, body).then(
         response => response.data
     );
     /* req :
@@ -65,7 +65,7 @@ export async function getPhotoInfo(body:{photoId:string}){
 
 // 작품에 대한 작가 정보 가져오기 api
 export async function getAuthorInfo(body:{key:number}){
-    const request = await axios.post(`http://localhost:3000/api/photo/get_author_info`, body).then(
+    const request = await axios.post(`http://localhost:3000/api/photo/author_info`, body).then(
         response=> response.data
     );
     /* req
@@ -83,7 +83,7 @@ export async function getAuthorInfo(body:{key:number}){
 
 // 작품 삭제 api
 export async function tmpPhotoDelete(body:{photoName:string, photoPath:string}){
-    const request = await axios.delete('api/photo/tmp_photo_delete', {data: body}).then(
+    const request = await axios.delete('api/photo/tmp_photo', {data: body}).then(
         response => response.data
     );
 
@@ -167,7 +167,7 @@ export async function getIsNew(body:{_id:string}){
 
 // 추천 작품 리스트 가져오기 api
 export async function getRecommendPhoto(_id:any, tagList:any){
-    const request = await axios.get('http://localhost:3000/api/photo/get_recommend_photo', {params: {_id:_id, tagList: tagList}}).then(
+    const request = await axios.get('http://localhost:3000/api/photo/recommend_photo', {params: {_id:_id, tagList: tagList}}).then(
         response => response.data
     );
 
@@ -191,7 +191,7 @@ export async function getTodayLank(){
 
 // 인기 태그 가져오기 api
 export async function getFamousTag(){
-    const request = await axios.get('http://localhost:3000/api/photo/get_famous_tag_list').then(
+    const request = await axios.get('http://localhost:3000/api/photo/famous_tag_list').then(
         response => response.data
     );
 
@@ -203,7 +203,7 @@ export async function getFamousTag(){
 
 // 최근 등록한 작품 가져오기 api
 export async function getRecentPhoto(category:number){
-    const request = await axios.get('http://localhost:3000/api/photo/get_recent_photo', {params: {category: category}}).then(
+    const request = await axios.get('http://localhost:3000/api/photo/recent_photo', {params: {category: category}}).then(
         response => response.data
     );
 

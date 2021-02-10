@@ -37,7 +37,7 @@ router.post("/upload", (req, res)=>{
 });
 
 // 임시 포토 파일 삭제
-router.delete("/tmp_photo_delete", (req, res)=>{
+router.delete("/tmp_photo", (req, res)=>{
     
     // console.log(`[SERVER] [PHOTO ROUTER] [TMP PHOTO DELETE DELETE] path: ${req?.route?.path}, REQUEST DATA: ${JSON.stringify(req?.body)} `);
     if(!req?.body?.photoPath) return res.json({success: true});
@@ -109,7 +109,7 @@ router.post("/add", auth, (req,res) => {
 });
 
 //db에서 해당 페이지 포토 정보 가져오기
-router.post('/get_photo_info', (req, res)=> {
+router.post('/photo_info', (req, res)=> {
     // console.log(`[SERVER] [PHOTO ROUTER] [GET_PHOTO_INFO POST] path: ${req.route.path}, RESULT: ${JSON.stringify(req.body)} `);
     PhotoModel.findOne({_id:req.body.photoId }, (err, doc)=>{
         if(err) res.json({success: false, err,})
@@ -120,7 +120,7 @@ router.post('/get_photo_info', (req, res)=> {
 });
 
 //db에서 작가 정보 가져오기
-router.post('/get_author_info', (req, res)=> {
+router.post('/author_info', (req, res)=> {
     // console.log(`[SERVER] [PHOTO ROUTER] [GET_AUTHOR_INFO POST] path: ${req.route.path}, BODY: ${JSON.stringify(req.body)} `);
     
     User.findOne({key:req.body.key}, (err, doc)=>{
@@ -245,7 +245,7 @@ router.post('/is_new', auth, findPhotoModelById, (req, res)=>{
 });
 
 // 작품을 추천할 목록을 반환한다.
-router.get('/get_recommend_photo', (req, res)=>{
+router.get('/recommend_photo', (req, res)=>{
     // console.log(`[SERVER] [PHOTO ROUTER] [RECOMMEND PHOTO GET] path: ${req.route.path}, BODY : ${JSON.stringify(req.query.tagList)} `);
     
     // 해당 페이지 작품에 있는 모든 테그와 관련된 작품을 추출한다.
@@ -284,7 +284,7 @@ router.get('/get_today_lank', (req, res)=>{
 });
 
 // 최근 등록된 작품 목록을 db에서 가져온다.
-router.get('/get_recent_photo', (req, res)=>{
+router.get('/recent_photo', (req, res)=>{
     // main에서 선택한 category 기준으로 최근 등록 작품 목록 반환
     PhotoModel.find({photoType: req.query.category}, (err, doc)=>{
         if(err) return res.json({success:false, err});
@@ -296,7 +296,7 @@ router.get('/get_recent_photo', (req, res)=>{
 });
 
 // 인기 테그리스트를 가져온다.
-router.get('/get_famous_tag_list', (req, res)=>{
+router.get('/famous_tag_list', (req, res)=>{
     // 작품 db에서 모든 테그리스트 배열을 원소화한 후, {tag name : 중복된 갯수} 형식으로 오름차순해서 가져온다.
     PhotoModel.aggregate([
         {"$unwind": "$tagList"},

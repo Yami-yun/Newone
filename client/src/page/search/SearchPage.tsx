@@ -27,8 +27,45 @@ const BottomLayout=styled.section`
 `;
 
 const PageLayout=styled.section`
+    height: 80%;
     background: #ffffff;
     padding-bottom: 95px;
+`;
+
+const Loading = styled.article`
+    padding : 7px 24px;
+
+    position: fixed;
+    top: 50vh;
+    background: #00a0ff;
+    
+    color: #ffffff;
+    font-size: 2rem;
+    font-weight: 900;
+    border-radius: 22px;
+    /* border: 1px solid; */
+`;
+
+const LoadingCircle = styled.div<{delay:number}>`
+    position: absolute;
+    top: 0px;
+    left: -36px;
+    width: 30px;
+    height: 100%;
+
+    background: #ffffff;
+    animation: loading 2s infinite ease;
+    animation-delay: ${props=> props.delay}s;
+    /* border: 1px solid black; */
+
+    @keyframes loading{
+        0%{
+            transform: translateX(-20px);
+        }
+        100%{
+            transform: translateX(250px);
+        }
+    }
 `;
 
 // 검색 결과 화면 컴포넌트
@@ -39,8 +76,10 @@ function SearchPage(){
     const [searchPhotoList, setSearchPhotoList] = useState<any>(null);
     const [searchAuthorList, setSearchAuthorList] = useState<any>(null);
     const [searchTagList, setSearchTagList] = useState<any>(null);
+    const [isLoading, setIsLoading] = useState<boolean>(false);                          // loading 여부 확인
 
     useEffect(() => {
+        // setIsLoading(0);
         searchPhoto(text).then(
             response=> {
                 if(response.payload.success) setSearchPhotoList(response.payload.result);
@@ -57,6 +96,8 @@ function SearchPage(){
             response=> {
                 if(response.payload.success) setSearchTagList(response.payload.result);
                 dispatch(response);
+                setIsLoading(true);
+                
             });
 
     }, [text]);
@@ -69,8 +110,17 @@ function SearchPage(){
                 <Header userData={userData}/>
             </TopLayout>
             <BottomLayout>
-                {/* 여기서부터 Page 내용 */}
+                
+                {/* 로딩 문구 */}
+                {!isLoading &&
+                <Loading>Loading...
+                    <LoadingCircle delay={0}/>
+                    <LoadingCircle delay={0.5}/>
+                    <LoadingCircle delay={1}/>
+                    <LoadingCircle delay={1.5}/>
+                </Loading>}
                 <PageLayout>
+                    {/* 여기서부터 Page 내용 */}
 
                     {/* 검색 단어 관련 작가 리스트 */}
                     <SearchList searchTxt={text} title={"관련된 작가"} data={searchAuthorList}/>

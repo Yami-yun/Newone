@@ -14,6 +14,7 @@ import {
     Line, 
     Text,
     GetBarW, } from './component/graphMaker';
+import { media } from 'component/customMediaQuery';
 
 const TopLayout=styled.section`
     padding: 20px 0;
@@ -30,6 +31,20 @@ const BottomLayout=styled.section`
     background: #faf1f1;
 `;
 
+const AlarmTxt=styled.section`
+    display:none;
+    width: 100%;
+    height: 50vh;
+    text-align: center;
+    line-height: 50vh;
+
+    font-size: 1.4rem;
+    font-weight: 500;
+    ${media.tablet}{
+        display: contents;
+    }
+`;
+
 const PageLayout=styled.section`
     width: 1000px;
     display: flex;
@@ -37,19 +52,23 @@ const PageLayout=styled.section`
     align-items:center;
     padding-bottom: 95px;
     background: #ffffff;
+
+    ${media.tablet}{
+        display: none;
+    }
+
 `;
+
+
 
 const ChartBox=styled.article`
     width: 804px;
     height: 600px;
     margin: 25px auto;
-    
-    /* border: 1px solid; */
 `;
 
 const Chart=styled.canvas`
     margin-top: 25px;
-    /* border: 1px solid; */
 `;
 
 const ChartTitle=styled.h1`
@@ -228,6 +247,9 @@ function Admin(){
             <Header userData={userData}/>
         </TopLayout>
         <BottomLayout>
+
+            {/* 일반 테블릿 사이즈 이하일 때 관리자페이지 내용 대신 아래 문구가 뜸 */}
+            <AlarmTxt>관리자 페이지는 PC에서만 사용 가능합니다.</AlarmTxt>
             {/* 여기서부터 Page 내용 */}
             <PageLayout>
                 {/* // 10일 동안 일일 방문자 수 그래프*/}

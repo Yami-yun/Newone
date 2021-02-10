@@ -81,7 +81,7 @@ export async function getUserInfo(){
 
 // 변경된 유저 개인 이미지 정보를 서버로 보내는 api
 export async function modifiedUserImg(dataToSubmit:any, config: any){
-    const request = await axios.post('/api/users/modified_personal_img', dataToSubmit, config).then(
+    const request = await axios.post('/api/users/personal_img', dataToSubmit, config).then(
         response => response.data
     );
 
@@ -105,7 +105,7 @@ interface IModifiedPersonalInfo{
 
 // 유저 개인 페이지 변경 정보를 서버로 보내는 api
 export async function modifiedPersonalInfo(dataToSubmit:IModifiedPersonalInfo){
-    const request = await axios.patch('./api/users/modified_personal_info', dataToSubmit).then(
+    const request = await axios.patch('./api/users/personal_info', dataToSubmit).then(
         response => response.data
     ).catch(e=>console.log(e));
 

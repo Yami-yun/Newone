@@ -13,7 +13,7 @@ export async function getData(){
 
 // 모든 작가 정보 가져오기 api
 export async function getAllUserData(){
-    const request = await axios.get(`${CLIENT_PATH}api/admin/get_all_user_data`).then(
+    const request = await axios.get(`${CLIENT_PATH}api/admin/all_user_data`).then(
         response => response.data
     );
 
@@ -22,7 +22,7 @@ export async function getAllUserData(){
 
 // 선택한 유저 db 삭제 api
 export async function deleteUserInfo(authorName:string){
-    const request = await axios.delete(`${CLIENT_PATH}api/admin/delete_user_info`,{data:{authorName}}).then(
+    const request = await axios.delete(`${CLIENT_PATH}api/admin/user_info`,{data:{authorName}}).then(
         response => response.data
     );
 
@@ -31,7 +31,7 @@ export async function deleteUserInfo(authorName:string){
 
 // 모든 작품 정보 가져오기 api
 export async function getAllPhotoData(){
-    const request = await axios.get(`${CLIENT_PATH}api/admin/get_all_photo_data`).then(
+    const request = await axios.get(`${CLIENT_PATH}api/admin/all_photo_data`).then(
         response => response.data
     );
 
@@ -40,7 +40,7 @@ export async function getAllPhotoData(){
 
 // 선택한 작품 db 삭제 api
 export async function deletePhotoInfo(body:{_id:string}){
-    const request = await axios.delete(`${CLIENT_PATH}api/admin/delete_photo_info`,{data:body}).then(
+    const request = await axios.delete(`${CLIENT_PATH}api/admin/photo_info`,{data:body}).then(
         response => response.data
     );
 

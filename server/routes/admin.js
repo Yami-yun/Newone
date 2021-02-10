@@ -19,7 +19,7 @@ router.get('/data', auth, (req, res)=>{
 });
 
 // 모든 작가 정보를 반환하는 api
-router.get('/get_all_user_data', auth, (req, res)=>{
+router.get('/all_user_data', auth, (req, res)=>{
 
     User.find({}, {authorName:1, email:1, createDate:1, follow:1, follower:1}, (err, docs)=>{
         if(err) res.json({success:false, err});
@@ -30,7 +30,7 @@ router.get('/get_all_user_data', auth, (req, res)=>{
 });
 
 // 모든 작품 정보를 반환하는 api
-router.get('/get_all_photo_data', auth, (req, res)=>{
+router.get('/all_photo_data', auth, (req, res)=>{
 
     PhotoModel.find({}, {authorName:1, title:1, createDate:1, _id:1}, (err, docs)=>{
         if(err) res.json({success:false, err});
@@ -41,7 +41,7 @@ router.get('/get_all_photo_data', auth, (req, res)=>{
 });
 
 // 관리자 페이지에서 작가 정보 삭제 api
-router.delete('/delete_user_info', auth, (req, res)=>{
+router.delete('/user_info', auth, (req, res)=>{
 
     User.findOneAndDelete({authorName: req.body.authorName}, (err, doc)=>{
         if(err) res.json({success:false, err});
@@ -56,7 +56,7 @@ router.delete('/delete_user_info', auth, (req, res)=>{
 });
 
 // 관리자 페이지에서 작품 정보 삭제 api
-router.delete('/delete_photo_info', auth, (req, res)=>{
+router.delete('/photo_info', auth, (req, res)=>{
 
     PhotoModel.findOneAndDelete({_id: req.body._id}, (err, doc)=>{
         if(err) res.json({success:false, err});

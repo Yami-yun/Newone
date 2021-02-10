@@ -16,9 +16,6 @@ const connect= mongoose.connect("mongodb+srv://yunyami:1234@cluster0.s4kox.mongo
 app.use(bodyParser.json());
 app.use(cookieParser());
 
-app.get('/', function(req, res) {
-    res.send('hello world2222');
-});
 
 // use($1: 미들웨어가 함수가 적용되는 기본 경로, $2 로컬 경로) : api를 모아놓을 수 있음
 
