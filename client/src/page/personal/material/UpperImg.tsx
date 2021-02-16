@@ -5,6 +5,7 @@ import upperImg from 'img/upperImg.png'
 import { SERVER_PATH } from 'config/path';
 import defaultImg from 'img/defaultPersonalImg.png';
 import { media } from 'component/customMediaQuery';
+import { IUpperImgProps } from 'page/personal/material/PersonalInterface';
 
 const Whole=styled.section`
     width: 1000px;
@@ -34,13 +35,14 @@ const UpperImgBox = styled.img`
 `;
 
 // 개인 페이지 상단 이미지 컴포넌트
-function UpperImg({personalInfo:personalInfo}:any){
+function UpperImg({upperImgName, upperImgPath }:IUpperImgProps){
 
     return (
     <>
         <GlobalStyle />
         <Whole>
-            <UpperImgBox src={!personalInfo?.upperImgName ? defaultImg : `${SERVER_PATH}${personalInfo?.upperImgPath}`}/>
+            <UpperImgBox src={!upperImgName ? defaultImg : `${SERVER_PATH}${upperImgPath}`}/>
+            {/* <UpperImgBox src={!personalInfo?.upperImgName ? defaultImg : `${SERVER_PATH}${personalInfo?.upperImgPath}`}/> */}
         </Whole>
     </>);
 }

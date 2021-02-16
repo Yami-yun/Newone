@@ -2,6 +2,7 @@ import React from 'react';
 import { useHistory } from 'react-router-dom';
 import styled, {css} from 'styled-components';
 import { media } from 'component/customMediaQuery';
+import { IFamousTagList } from 'page/main/material/MainInterface';
 
 let color = [
     "#fc5c65",
@@ -57,12 +58,8 @@ function shuffle(array:any) {
     array.sort(() => Math.random() - 0.5);
 }
 
-interface Props{
-    famousTagList:{_id:string, count:number}[],
-};
-
 // 랜덤 스타일 테그 리스트 컴포넌트
-export default function RandomTagStyle({famousTagList}:Props){
+export default function RandomTagStyle({famousTagList}:{famousTagList:IFamousTagList[]}){
     const history = useHistory();
     shuffle(color);
 

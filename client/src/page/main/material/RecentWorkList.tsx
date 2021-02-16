@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import GlobalStyle from 'globalStyles';
 import {CLIENT_PATH, SERVER_PATH} from 'config/path';
 import { media } from 'component/customMediaQuery';
+import { IRecentPhotoList } from 'page/main/material/MainInterface';
 
 const Whole = styled.section`
     width: 1000px;
@@ -69,16 +70,16 @@ const RecentWorkImgBox = styled.img`
     }
 `;
 
-// 최근 작품 리스트 컴포넌트
-function RecentWorkList({recentPhotoList}:any){
-    console.log(recentPhotoList);
+// 최근 작품 리스트 컴포넌트 IRecentPhotoList
+function RecentWorkList({recentPhotoList}:{recentPhotoList:IRecentPhotoList[]}){
+
     return (
     <>
         <GlobalStyle />
         <Whole>
             <BoxTitle>최신 작품</BoxTitle>
             <RecentWorkImgList>
-                { recentPhotoList && recentPhotoList.map((tmp:any, index:number)=>(
+                { recentPhotoList && recentPhotoList.map((tmp:IRecentPhotoList, index:number)=>(
                     <a key={index} href={`${CLIENT_PATH}photo/${tmp._id}`}>
                         <RecentWorkImgBox src={`${SERVER_PATH}${tmp.photoPath}`}/>
                     </a>

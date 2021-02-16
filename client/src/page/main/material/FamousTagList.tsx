@@ -1,8 +1,9 @@
-import React, { useEffect, useRef, useState } from 'react';
-import styled, {css} from 'styled-components';
+import React from 'react';
+import styled from 'styled-components';
 import GlobalStyle from 'globalStyles';
 import RandomTagStyle from './RandomTagStyle';
 import { media } from 'component/customMediaQuery';
+import { IFamousTagList } from 'page/main/material/MainInterface';
 
 
 const Whole = styled.section`
@@ -28,7 +29,7 @@ const WordCloud = styled.article`
     }
 `;
 
-function FamousTagList({famousTagList}:any){
+function FamousTagList({famousTagList}:{famousTagList:IFamousTagList[]}){
 
     return (
     <>

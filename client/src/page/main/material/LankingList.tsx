@@ -89,6 +89,7 @@ const SwipeBtn = styled.button`
 
 // 금일 랭킹 리스트 컴포넌트
 function LankingList({lankList}:any) {
+    console.log(lankList);
     const date = new Date();
 
     const m = date.getMonth() + 1 >= 10 ? (date.getMonth() + 1).toString() : "0"+(date.getMonth() + 1).toString();

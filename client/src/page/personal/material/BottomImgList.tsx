@@ -9,6 +9,7 @@ import { deletePhoto } from "redux/actions/photoAction";
 import { useDispatch } from "react-redux";
 import { MODIFY_PHOTO } from 'redux/actions/types';
 import { media } from 'component/customMediaQuery';
+import { IBottomingListProps } from 'page/personal/material/PersonalInterface';
 
 const Whole=styled.section`
     width: 1000px;
@@ -140,13 +141,13 @@ const Photo = styled.img`
 `;
 
 // 개인 페이지 작가 작품 리스트
-function BottomImgList({personalInfo}:any){
+function BottomImgList({photo, isUser}:IBottomingListProps){
     const history = useHistory();
     const dispatch = useDispatch();
     
     const [tabNum, setTabNum] = useState<Number>(0);
 
-    const photoData = personalInfo?.photo;
+    const photoData = photo;
 
     // 일러스트, 만화 ,캘리그라피 Tab click시 유저가 등록한 해당 type 이미지들을 보여줌
     const onTabHandler = (tabNum:Number) => {
@@ -189,7 +190,7 @@ function BottomImgList({personalInfo}:any){
                                     <Photo src={`${SERVER_PATH}${data.path}`}/>
                                 </Link>
                                 
-                                {personalInfo?.isUser && <IconList>
+                                {isUser && <IconList>
                                     {/* modify icon */}
                                     <Icon onClick={()=>{onPhotoModifyHandler(data)}}> <FontAwesomeIcon icon={faEdit}/> </Icon>
                                     {/* delete icon */}

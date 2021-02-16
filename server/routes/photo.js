@@ -262,7 +262,8 @@ router.get('/get_today_lank', (req, res)=>{
     const y = date.getFullYear().toString();
     const m = date.getMonth() + 1 >= 10 ? (date.getMonth() + 1).toString() : "0"+(date.getMonth() + 1).toString();
     const d = date.getDate() + 1 >= 10 ? date.getDate().toString() : "0"+date.getDate().toString();
-
+    console.log("##################");
+    // console.log(Date.today());
     // 오늘날짜로 new를 많이 받은 작품들 순으로 가져온다.
     PhotoModel.aggregate([{"$project": {
             "title": 1,
@@ -273,25 +274,26 @@ router.get('/get_today_lank', (req, res)=>{
         }},
 
         {"$sort": {"length": -1}},
-        {"$limit": 20},
+        {"$limit": 10},
         {"$match": {"createDate": y+"-"+m+"-"+d } },
 
     ], (err, doc)=>{
         if(err) return res.json({success:false, err});
 
+
         return res.json({ success:true, result: doc });
     });
 });
 
-// 최근 등록된 작품 목록을 db에서 가져온다.
+// 최근 등록된 작품 목록 중 해당 type에 맞게 db에서 조회한다. 그 중에서 photo _id와  photoPath만 반환한다.
 router.get('/recent_photo', (req, res)=>{
     // main에서 선택한 category 기준으로 최근 등록 작품 목록 반환
-    PhotoModel.find({photoType: req.query.category}, (err, doc)=>{
+    PhotoModel.find({photoType: req.query.category}, {_id:1, photoPath:1}, (err, doc)=>{
         if(err) return res.json({success:false, err});
 
         return res.json({success:true, result: doc});
     })
-    .sort({ new: -1 })
+    .sort({ createDate: -1 })
     .limit(100);
 });
 

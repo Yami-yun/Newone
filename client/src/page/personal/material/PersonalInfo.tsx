@@ -10,6 +10,7 @@ import { faHome } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { followUser, getIsFollow } from 'redux/actions/userAction';
 import { media } from 'component/customMediaQuery';
+import { IPersonalInfoProps } from 'page/personal/material/PersonalInterface';
 
 const Whole=styled.section`
     display:flex;
@@ -174,7 +175,7 @@ const PersonalDescription = styled.p`
     }
 `;
 
-function PersonalInfo({personalInfo}:any){
+function PersonalInfo({personalInfo}:{personalInfo:IPersonalInfoProps | undefined}){
 
     const photoData = personalInfo?.photo;
     const [isFollow, setIsFollow] = useState<boolean>(false);
@@ -184,7 +185,7 @@ function PersonalInfo({personalInfo}:any){
         setIsFollow(!isFollow);
         const body = {
             follow: !isFollow,
-            key : personalInfo.key,
+            key : personalInfo?.key,
         };
         followUser(body).then(
             response => {
@@ -232,7 +233,7 @@ function PersonalInfo({personalInfo}:any){
                 <PersonalRecord>
                     작품 수&nbsp;&nbsp;&nbsp;&nbsp;{photoData?.length}&nbsp;&nbsp;&nbsp;&nbsp;
                     Follower&nbsp;&nbsp;&nbsp;&nbsp;{personalInfo?.follower.length}&nbsp;&nbsp;&nbsp;&nbsp;
-                    Follow&nbsp;&nbsp;&nbsp;&nbsp;{personalInfo?.follow.length + isFollow}
+                    Follow&nbsp;&nbsp;&nbsp;&nbsp;{personalInfo && personalInfo.follow.length + Number(isFollow)}
                 </PersonalRecord>
 
                 {/* // 작가 설명 */}

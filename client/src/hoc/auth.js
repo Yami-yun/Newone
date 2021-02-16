@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react';
+import {useEffect} from 'react';
 import { useDispatch } from 'react-redux';
 import { auth } from 'redux/actions/userAction';
 
@@ -37,7 +37,7 @@ export default function(SpecificComponent, option){
                 }
 
             });
-        }, []);
+        });
 
         return <SpecificComponent />;
     }

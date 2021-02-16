@@ -8,8 +8,9 @@ import BottomImgList from 'page/personal/material/BottomImgList';
 import Footer from 'component/Footer';
 
 import { useSelector } from 'react-redux';
-import { useParams, useHistory } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import { getPersonalInfo } from 'redux/actions/personalAction';
+import { IPersonalInfoProps } from 'page/personal/material/PersonalInterface';
 
 const TopLayout=styled.section`
     padding: 20px 0;
@@ -36,11 +37,9 @@ const PageLayout=styled.section`
 function Personal(){
     const match = useParams<{id:string}>();
     const userData = useSelector(state => state.user.auth);
-    const history = useHistory();
-    const [personalInfo, setPersonalInfo] = useState<any>(null);
+    const [personalInfo, setPersonalInfo] = useState<IPersonalInfoProps>();
     const status = useSelector(state => state.photo);
-    
-    console.log(personalInfo);
+
 
     useEffect(() => {
         const body = {
@@ -51,7 +50,6 @@ function Personal(){
             response=> {
                 if(response.payload.result){
                     setPersonalInfo(response.payload.result);
-                    console.log(response.payload.result);
                 }
             }
         );
@@ -67,9 +65,9 @@ function Personal(){
         <BottomLayout>
             <PageLayout>
                 {/* // 여기서부터 페이지 내용 */}
-                <UpperImg personalInfo={personalInfo} />
+                <UpperImg {...personalInfo} />
                 <PersonalInfo personalInfo={personalInfo} />
-                <BottomImgList personalInfo={personalInfo} />
+                <BottomImgList photo={personalInfo?.photo} isUser={personalInfo?.isUser} />
             </PageLayout>
         </BottomLayout>
         <Footer />
