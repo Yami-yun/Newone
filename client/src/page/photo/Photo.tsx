@@ -12,6 +12,7 @@ import { getPhotoInfo, getAuthorInfo, getIsNew, getRecommendPhoto } from 'redux/
 import { SERVER_PATH } from 'config/path';
 import Footer from 'component/Footer';
 import { media } from 'component/customMediaQuery';
+import { IAuthorInfo, IPhotoInfo } from 'page/photo/material/PhotoInterface';
 
 const TopLayout=styled.section`
     padding: 20px 0;
@@ -84,8 +85,8 @@ function Photo(){
     const dispatch = useDispatch();
     const userStatus = useSelector(state => state.user.auth);
 
-    const [photoInfo, setPhotoInfo] = useState<any>(null);                              // 해당 페이지 작품 정보
-    const [authorInfo, setauthorInfo] = useState<any>(null);                            // 해당 페이지 작품의 작가 정보
+    const [photoInfo, setPhotoInfo] = useState<IPhotoInfo>();                              // 해당 페이지 작품 정보
+    const [authorInfo, setauthorInfo] = useState<IAuthorInfo>();                            // 해당 페이지 작품의 작가 정보
     const [recommendPhotoList, setRecommendPhotoList] = useState<any>(null);            // 해당 페이지 작품의 추천리스트
     const [isNew, setIsNew] = useState<boolean>(false);                                 // 작품의 New 상태 변수
 
@@ -148,7 +149,7 @@ function Photo(){
                     {/* 작품 및 작가 설명, 코멘트 */}
                     <PhotoBottomPage >
                         <ImgDescription authorInfo={authorInfo} photoInfo={photoInfo} setIsNew={setIsNew} isNew={isNew} />
-                        <AuthorImgList authorInfo={authorInfo} />
+                        <AuthorImgList _key={authorInfo?.key}  personalImgPath={authorInfo?.personalImgPath} authorName={authorInfo?.authorName} photo={authorInfo?.photo} />
                         <Comment photoInfo={photoInfo}/>
                     </PhotoBottomPage>
                 </section>

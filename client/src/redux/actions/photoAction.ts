@@ -142,7 +142,7 @@ export async function modifyPhoto(body:ModifyPhotoProps){
 
 
 // 다른 작가들이 해당 작품의  New btn 클릭시, New 갯수 변경 api
-export async function setPhotoNew(body:{isNew:boolean, _id:string}){
+export async function setPhotoNew(body:{isNew:boolean, _id:string | undefined}){
     const request = await axios.patch('http://localhost:3000/api/photo/new', body).then(
         response => response.data
     );
@@ -154,7 +154,7 @@ export async function setPhotoNew(body:{isNew:boolean, _id:string}){
 };
 
 // 현재 유저가 해당 페이지 작품의 New 클릭 여부 확인 api
-export async function getIsNew(body:{_id:string}){
+export async function getIsNew(body:{_id:string | undefined}){
     const request = await axios.post('http://localhost:3000/api/photo/is_new', body).then(
         response => response.data
     );

@@ -6,11 +6,11 @@ import reportWebVitals from './reportWebVitals';
 import {BrowserRouter} from "react-router-dom";
 import { Provider } from "react-redux";
 import { applyMiddleware, createStore } from 'redux';
-import promiseMiddleware from 'redux-promise';
+
 import ReduxThunk from 'redux-thunk';
 import Reducer from 'redux/reducers';
 
-const store = createStore(Reducer ,applyMiddleware(promiseMiddleware, ReduxThunk));
+const store = createStore(Reducer ,applyMiddleware(ReduxThunk));
 
 ReactDOM.render(
   <Provider store={store}>

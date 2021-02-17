@@ -185,7 +185,7 @@ function HeaderIconList({userData}:any) {
             {isLogin && <IconBox style={{position:"relative"}}>
                 <FontAwesomeIcon icon={faBell} style={{color:"#00A0FF"}} onClick={showAlarm}/>
                 {isShowAlarm && <AlarmBox>
-                    {userData?.alarm.length ? userData.alarm.map((tmp:any, index:number)=>(
+                    {userData?.alarm.length ? userData.alarm.reverse().map((tmp:any, index:number)=>(
                         <Link key={index} to={`/photo/${tmp.photoKey}`}>
                             <AlarmTxt >{strCheck(tmp.str) + timeCheck(tmp.createDate)}</AlarmTxt>
                         </Link>

@@ -6,6 +6,7 @@ import {useDispatch} from 'react-redux';
 import {SERVER_PATH, CLIENT_PATH} from 'config/path';
 import defaultImg from 'img/defaultPersonalImg.png';
 import { media } from 'component/customMediaQuery';
+import { IAuthorInfo, IPhotoInfo } from 'page/photo/material/PhotoInterface';
 
 const Whole=styled.section`
     width: 90%;
@@ -110,10 +111,10 @@ const ImgDescriptionBottom = styled.div`
 `;
 
 interface Props{
-    photoInfo:any,
+    photoInfo:IPhotoInfo | undefined,
     setIsNew(isNew:boolean):void,
     isNew:boolean,
-    authorInfo:any,
+    authorInfo:IAuthorInfo | undefined,
 };
 // 작품 설명 박스 컴포넌트 
 function ImgDescription({photoInfo, setIsNew, isNew, authorInfo}:Props){
@@ -149,12 +150,12 @@ function ImgDescription({photoInfo, setIsNew, isNew, authorInfo}:Props){
             </ImgDescriptionTop>
             {/* 해당 페이지 이미지 테그 리스트 */}
             <ImgTagList>
-                {photoInfo?.tagList.map((cmp:string, index:number)=> (<ImgTag key={index}>{`#${cmp}`}</ImgTag>))}
+                {photoInfo?.tagList?.map((cmp:string, index:number)=> (<ImgTag key={index}>{`#${cmp}`}</ImgTag>))}
             </ImgTagList>
             {/* 해당 페이지 이미지 New 갯수, 생성 날짜 */}
             <ImgDescriptionMiddle>
-                <ImgNewCount>New {photoInfo?.new.length } 개</ImgNewCount>
-                <ImgCreateDate>{photoInfo?.createDate.substr(0,10)}</ImgCreateDate>
+                <ImgNewCount>New {photoInfo?.new?.length } 개</ImgNewCount>
+                <ImgCreateDate>{photoInfo?.createDate?.substr(0,10)}</ImgCreateDate>
             </ImgDescriptionMiddle>
             {/* 포토 설명 */}
             <ImgDescriptionBottom>

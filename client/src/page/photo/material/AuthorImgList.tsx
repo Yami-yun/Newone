@@ -7,6 +7,7 @@ import defaultImg from 'img/defaultPersonalImg.png';
 import { followUser, getIsFollow } from 'redux/actions/userAction';
 import { media } from 'component/customMediaQuery';
 import { useDispatch } from 'react-redux';
+import { IAuthorImgListProps, IPhoto } from 'page/photo/material/PhotoInterface';
 
 const Whole=styled.section`
     width: 738px;
@@ -62,15 +63,17 @@ const ImgBox = styled.img`
     cursor: pointer;
 `;
 
+// key  personalImgPath authorName photo
 // 작품 페이지에서 작가 이미지 리스트 컴포넌트
-function AuthorImgList({authorInfo}:any){
+function AuthorImgList({ _key,  personalImgPath, authorName, photo}:IAuthorImgListProps){
+
     const dispatch = useDispatch();
     const [isFollow, setIsFollow] = useState<boolean>(false);
 
     useEffect(() => {
         // 해당 작품의 작가와의 사용자간의 팔로우 여부 확인
-        if(authorInfo){
-            getIsFollow({key : authorInfo?.key}).then(
+        if(_key){
+            getIsFollow({key : _key}).then(
                 response=>{
                     if(response.payload.success){
                         setIsFollow(response.payload.result);
@@ -79,14 +82,14 @@ function AuthorImgList({authorInfo}:any){
                 }
             );
         }
-    }, [authorInfo?.key]);
+    }, [_key]);
 
     // 팔로우 on / off
     const onIsFollowHandler = () => {
         setIsFollow(!isFollow);
         const body = {
             follow: !isFollow,
-            key : authorInfo.key,
+            key : _key,
         };
         followUser(body).then(
             response => {
@@ -99,17 +102,17 @@ function AuthorImgList({authorInfo}:any){
         <Whole>
             {/* 작가 아이콘, 네임 */}
             <IDBox>
-                <a href={`${CLIENT_PATH}personal/${authorInfo?.key}`}>
-                    <PersonalImg src={!authorInfo?.personalImgPath ? defaultImg : `${SERVER_PATH}${authorInfo?.personalImgPath}`}/>
+                <a href={`${CLIENT_PATH}personal/${_key}`}>
+                    <PersonalImg src={!personalImgPath ? defaultImg : `${SERVER_PATH}${personalImgPath}`}/>
                 </a>
-                <a href={`${CLIENT_PATH}personal/${authorInfo?.key}`}>
-                    <p>{authorInfo?.authorName}</p>
+                <a href={`${CLIENT_PATH}personal/${_key}`}>
+                    <p>{authorName}</p>
                 </a>
                 <PhotoBlueBtn onClick={onIsFollowHandler} >{isFollow ? `Followed!` : `Follow!`}</PhotoBlueBtn>
             </IDBox>
             {/* 작가 작품 리스트 */}
             <ImgList>
-                {authorInfo?.photo.map((tmp:any, index:number)=>(
+                {photo && photo.map((tmp:IPhoto, index:number)=>(
                     <a key={index} href={`${CLIENT_PATH}photo/${tmp.id}`}><ImgBox src={`${SERVER_PATH}${tmp.path}`}/></a>))}
             </ImgList>
         </Whole>

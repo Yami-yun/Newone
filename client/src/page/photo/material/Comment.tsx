@@ -10,6 +10,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import defaultImg from 'img/defaultPersonalImg.png';
 import {auth} from 'redux/actions/userAction';
 import { media } from 'component/customMediaQuery';
+import { ICommentList, IPhotoInfo } from 'page/photo/material/PhotoInterface';
 
 const Whole=styled.article`
     width: 738px;
@@ -141,9 +142,10 @@ const CommentInput = styled.input`
 `;
 
 // 작품 페이지에서 코멘트 박스 컴포넌트
-function Comment({photoInfo}:any){
+function Comment({photoInfo}:{photoInfo:IPhotoInfo | undefined}){
+    
     const [comment, setComment] = useState<string>("");                 // 현재 작성 중인 댓글
-    const [commentList, setCommentList] = useState<any>([]);            // 서버에서 받아온 댓글 리스트
+    const [commentList, setCommentList] = useState<ICommentList[]>([]);            // 서버에서 받아온 댓글 리스트
     const [commentCount, setCommentCount] = useState<number>(1);                // 현재 보여주는 댓글 수,  1 이면 3개, 2이면 6개를 보여준다.
     const [isCommentModify, setIsCommentModify] = useState<number>(-1);         // 수정할 댓글의 index 값
     const [modifyCommentTxt, setModifyCommentTxt] = useState<string>("");       // 변경된 텍스트 문구 
@@ -197,6 +199,7 @@ function Comment({photoInfo}:any){
                 response => {
                     setCommentList(response.payload.result);
                     dispatch(response);
+                    console.log(commentList);
                 }
             );
         }
@@ -220,7 +223,7 @@ function Comment({photoInfo}:any){
                 </CommentInputBox>
 
                 {/* 댓글 목록 */}
-                {commentList && commentList.map((tmp:any, index:number) => {
+                {commentList && commentList.map((tmp:ICommentList, index:number) => {
                     if(commentCount*3 > index) return(
                     <CommentBox key={index}>
                         {userKey === tmp.authorKey &&
