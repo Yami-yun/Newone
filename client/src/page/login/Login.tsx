@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import styled from 'styled-components';
+import styled, {css} from 'styled-components';
 import GlobalStyle from 'globalStyles';
 import {InputBox} from 'component/input';
 import {BlueBtn} from 'component/button';
@@ -22,7 +22,7 @@ const Whole=styled.section`
     align-items: center;
 `;
 
-const LoginScreen = styled.div`
+const LoginScreen = styled.div<{isSuccessLogin:boolean}>`
     width: 1000px;
     height: 600px;
     padding: 110px 94px;
@@ -33,6 +33,13 @@ const LoginScreen = styled.div`
     display: flex;
     justify-content: center;
     align-items: center;
+
+    ${(props)=>(
+        props.isSuccessLogin && css`
+        width: 0px;
+        opacity: 0;
+        transition: all 0.5s ease-in-out;
+        `)}
 
     ${media.tablet}{
         width: 740px;
@@ -139,6 +146,7 @@ const LoginSubBtn=styled.button`
 function Login(){
     const [email, setEmail] = useState<string>("");
     const [password, setpassword] = useState<string>("");
+    const [isSuccessLogin, setIsSuccessLogin] = useState(false);
     const dispatch = useDispatch();
     const history = useHistory();
 
@@ -176,8 +184,12 @@ function Login(){
 
             // 로그인 성공 시, 로그인 정보 저장 및 main 화면으로 이동
             if(response.payload.success){
-                dispatch(response);
-                history.push("/");
+                setIsSuccessLogin(true);
+                setTimeout(()=>{
+                    dispatch(response);
+                    history.push("/");
+                },800)
+                
             }else{
                 // 로그인 실패 시, 경고 문구 출력
                 alert(response.payload.message);
@@ -189,7 +201,7 @@ function Login(){
     <>
         <GlobalStyle />
         <Whole style={{backgroundImage:`url(${background})`}}>
-            <LoginScreen>
+            <LoginScreen isSuccessLogin={isSuccessLogin}>
                 {/* 로그인 창 왼쪽에 위치한 이미지 */}
                 <LoginScreenLeft src={loginImg}/>
 

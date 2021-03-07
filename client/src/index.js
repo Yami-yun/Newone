@@ -10,7 +10,14 @@ import { applyMiddleware, createStore } from 'redux';
 import ReduxThunk from 'redux-thunk';
 import Reducer from 'redux/reducers';
 
-const store = createStore(Reducer ,applyMiddleware(ReduxThunk));
+import promise from 'redux-promise';
+
+import 'react-app-polyfill/ie9';
+
+import 'react-app-polyfill/ie11';
+import 'react-app-polyfill/stable';
+
+const store = createStore(Reducer ,applyMiddleware(ReduxThunk, promise));
 
 ReactDOM.render(
   <Provider store={store}>

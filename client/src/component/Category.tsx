@@ -21,7 +21,7 @@ const NavList = styled.ul`
     display:flex;
 `;
 
-const NavListItem = styled.li`
+const NavListItem = styled.li<{str:string}>`
     list-style: none;
     margin-right: 3.2em;
     color: #00A0FF;
@@ -31,6 +31,8 @@ const NavListItem = styled.li`
 
     &:hover{
         text-decoration: underline;
+        /* font-weight: 750; */
+        color:#E3A654;
     }
 
     ${media.phone}{
@@ -47,9 +49,9 @@ function Category({setCategory}: Props) {
     return (
         <Whole>
             <NavList>
-                <NavListItem onClick={()=>{setCategory(0);}}>일러스트</NavListItem>
-                <NavListItem onClick={()=>{setCategory(1);}}>만화</NavListItem>
-                <NavListItem onClick={()=>{setCategory(2);}}>캘리그라피</NavListItem>
+                <NavListItem str={"일러스트"} onClick={()=>{setCategory(0);}}>일러스트</NavListItem>
+                <NavListItem str={"만화"} onClick={()=>{setCategory(1);}}>만화</NavListItem>
+                <NavListItem str={"캘리그라피"} onClick={()=>{setCategory(2);}}>캘리그라피</NavListItem>
             </NavList>
         </Whole>
     )

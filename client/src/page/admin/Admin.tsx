@@ -194,10 +194,12 @@ function Admin(){
             }
 
             // 막대 render
+ 
             for(let i=0; i< xDataLen; i++){
                 Rect({ctx: ctx, x: offset.x + i * (w + barGapW), y: offset.y, 
                     w: w, h: chartData[i].count / maxY * (canvasH -2 * offset.y), c: "#7daef8"});
             }
+
 
             // x 축 날짜 render
             for(let i=0; i< xDataLen; i++){

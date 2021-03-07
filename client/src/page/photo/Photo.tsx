@@ -42,6 +42,53 @@ const PageLayout=styled.section`
     }
 `;
 
+const ExpandImgSection = styled.section`
+    position: fixed;
+    top: 0px;
+    left: 0px;
+
+    width: 100vw;
+    height: 100vh;
+
+    display:flex;
+    justify-content: center;
+    align-items: center;
+
+    background: rgba(61, 48, 48, 0.7);
+`;
+
+const ExitBtn = styled.button`
+    position : relative;
+    left: 10px;
+
+    width: 40px;
+    height: 40px;
+    opacity:0.9;
+    background: white;
+    border: 2px dashed #cfcfcf;
+    border-radius: 100%;
+
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: #cfcfcf;
+
+    &:hover, &:active{
+        border-color: #494949;
+        color: #494949;
+    }
+
+    ${media.phone}{
+        left: -10px;
+    }
+`;
+
+const ExpandImg = styled.img`
+    border: 4px dashed #e99d9d;
+    border: 4px dashed white;
+    max-width: 88%;
+    max-height: 88%;
+`;
+
 // 선택된 이미지
 const PhotoBox = styled.section`
     width: 820px;
@@ -89,6 +136,7 @@ function Photo(){
     const [authorInfo, setauthorInfo] = useState<IAuthorInfo>();                            // 해당 페이지 작품의 작가 정보
     const [recommendPhotoList, setRecommendPhotoList] = useState<any>(null);            // 해당 페이지 작품의 추천리스트
     const [isNew, setIsNew] = useState<boolean>(false);                                 // 작품의 New 상태 변수
+    const [isExpandPhoto, setIsExpandPhoto] = useState(false);
 
     useEffect(() => {
         const body = {
@@ -141,9 +189,15 @@ function Photo(){
         <BottomLayout>
             <PageLayout >
                 <section style={{display: "flex", flexDirection: "column", alignItems: "center", paddingBottom: 95}}>
+                    {/* 이미지 확대 모달 창 */}
+                    {isExpandPhoto && <ExpandImgSection>
+                        <ExpandImg alt="photo" src={photoInfo && `${SERVER_PATH}${photoInfo?.photoPath}`} />
+                        <ExitBtn onClick={()=>setIsExpandPhoto(false)}>⤫</ExitBtn>
+                    </ExpandImgSection>}
+
                     {/* 작품 이미지 */}
-                    <PhotoBox>
-                        <img alt="photo" style={{width: "100%", height: "100%", objectFit:"contain"}} src={photoInfo && `${SERVER_PATH}${photoInfo?.photoPath}`} />
+                    <PhotoBox onClick={()=>setIsExpandPhoto(true)}>
+                        <img alt="photo" style={{width: "100%", height: "100%", objectFit:"contain", cursor:"pointer"}} src={photoInfo && `${SERVER_PATH}${photoInfo?.photoPath}`} />
                     </PhotoBox>
 
                     {/* 작품 및 작가 설명, 코멘트 */}

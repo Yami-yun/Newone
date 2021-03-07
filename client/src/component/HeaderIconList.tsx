@@ -56,11 +56,22 @@ const PersonalMenuBox = styled.ul`
 
     font-size: 1rem;
     box-shadow: 2px 2px 3px 1px #9e9e9e;
-    background: #f7fafa; 
+    background: #f7fafa;
+
+    animation: amenu 0.3s ease-in-out;
 
     ${media.phone}{
         width:90px;
         left: -60px;
+    }
+
+    @keyframes amenu{
+        0% {
+            opacity: 0;
+        }
+        100% {
+            opacity: 1;
+        }
     }
 `;
 
@@ -70,10 +81,16 @@ const AlarmBox = styled.div`
     left: -410px;
     width: 500px;
     height: 240px;
+    padding : 2px 6px 12px 12px;
     z-index:10;
     overflow-y: auto;
     box-shadow: 2px 2px 3px 1px #9e9e9e;
     background: #f7fafa; 
+
+    &::-webkit-scrollbar {width: 14px;}
+    &::-webkit-scrollbar-thumb{
+        background:#aaaaaa;
+    }
 
     ${media.tablet}{
         left: -270px;
@@ -89,13 +106,17 @@ const AlarmBox = styled.div`
 
 const AlarmTxt = styled.p`
     height:40px;
-    border-bottom: 2px solid;
+    border-bottom: 2px dashed;
 
     line-height: 40px;
     font-size: 0.8rem;
     font-weight: 600;
     color: #afafaf;
 
+    &:hover{
+        font-size: 0.85rem;
+        font-weight: 900;
+    }
 `;
 
 const PersonalMenuItem = styled.li`
@@ -103,6 +124,10 @@ const PersonalMenuItem = styled.li`
 
     font-weight: 600;
     color: #38b6ff;
+
+    &:hover{
+        color:#E3A654;
+    }
 `;
 
 // Header 안에 우측에 아이콘 리스트 컴포넌트
@@ -184,8 +209,9 @@ function HeaderIconList({userData}:any) {
             {/* AlarmIcon */}
             {isLogin && <IconBox style={{position:"relative"}}>
                 <FontAwesomeIcon icon={faBell} style={{color:"#00A0FF"}} onClick={showAlarm}/>
+
                 {isShowAlarm && <AlarmBox>
-                    {userData?.alarm.length ? userData.alarm.reverse().map((tmp:any, index:number)=>(
+                    {userData?.alarm.length ? userData.alarm.map((tmp:any, index:number)=>(
                         <Link key={index} to={`/photo/${tmp.photoKey}`}>
                             <AlarmTxt >{strCheck(tmp.str) + timeCheck(tmp.createDate)}</AlarmTxt>
                         </Link>
