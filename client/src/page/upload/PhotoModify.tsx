@@ -35,8 +35,8 @@ function PhotoModify(){
     const history = useHistory();
 
     // 사용자의 데이터를 가져온다.
-    const userData = useSelector(state => state.user.auth);
-    const photoData = useSelector(state => state.photo.modifyPhoto);
+    const userData = useSelector((state:any) => state.user.auth);
+    const photoData = useSelector((state:any) => state.photo.modifyPhoto);
 
     useEffect(() => {
         // 수정할 photo info를 가져옴

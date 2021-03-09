@@ -51,15 +51,32 @@ const ExpandImgSection = styled.section`
     height: 100vh;
 
     display:flex;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
 
     background: rgba(61, 48, 48, 0.7);
 `;
 
+const ExpandImg = styled.img`
+    position : relative;
+    border: 4px dashed #e99d9d;
+    border: 4px dashed white;
+    max-width: 88%;
+    max-height: 88%;
+    left : -16px;
+
+    ${media.phone}{
+        left : -8px;
+        /* max-width: 70%;
+        max-height: 70%; */
+
+    }
+`;
+
 const ExitBtn = styled.button`
     position : relative;
-    left: 10px;
+    top: -15px;
 
     width: 40px;
     height: 40px;
@@ -76,18 +93,9 @@ const ExitBtn = styled.button`
         border-color: #494949;
         color: #494949;
     }
-
-    ${media.phone}{
-        left: -10px;
-    }
 `;
 
-const ExpandImg = styled.img`
-    border: 4px dashed #e99d9d;
-    border: 4px dashed white;
-    max-width: 88%;
-    max-height: 88%;
-`;
+
 
 // 선택된 이미지
 const PhotoBox = styled.section`
@@ -130,7 +138,7 @@ function Photo(){
     const match = useParams<{id:string}>();
     const history = useHistory();
     const dispatch = useDispatch();
-    const userStatus = useSelector(state => state.user.auth);
+    const userStatus = useSelector((state:any) => state.user.auth);
 
     const [photoInfo, setPhotoInfo] = useState<IPhotoInfo>();                              // 해당 페이지 작품 정보
     const [authorInfo, setauthorInfo] = useState<IAuthorInfo>();                            // 해당 페이지 작품의 작가 정보

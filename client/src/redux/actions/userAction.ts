@@ -38,7 +38,7 @@ export async function registerUser(dataToSubmit:IRegisterUserProps){
 export async function loginUser(dataToSubmit:{email : string, password : string}){
     const request = await axios.post('/api/users/login', dataToSubmit)
     .then(response => response.data)
-    .catch(e=>console.log(e));
+    .catch(e=> console.log(e));
 
     return({
         type: LOGIN_USER,
@@ -48,8 +48,9 @@ export async function loginUser(dataToSubmit:{email : string, password : string}
 
 // 로그아웃할 유정의 토큰 정보를 db에서 삭제할 api
 export async function logoutUser(){
-    const request = await axios.get('/api/users/logout')
-    .then(response => response.data);
+    const request = await axios.get('/api/users/logout', {headers : {'Pragma': 'no-cache'}})
+    .then(response => response.data)
+    .catch(e=>console.log(e));
 
     return({
         type: LOGOUT_USER,
@@ -59,8 +60,10 @@ export async function logoutUser(){
 
 // 유저의 인증 여부를 확인하는 api
 export async function auth() {
-    const request = await axios.get('/api/users/auth')
-        .then(response => response.data);
+    console.log("auth!");
+    const request = await axios.get('/api/users/auth', {headers : {'Pragma': 'no-cache'}})
+        .then(response => response.data)
+        .catch(e=>console.log(e));
 
     return ({
         type: AUTH_USER,

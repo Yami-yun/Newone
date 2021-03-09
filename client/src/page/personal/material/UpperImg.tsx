@@ -28,6 +28,7 @@ const Whole=styled.section`
 
 const UpperImgBox = styled.img`
     object-fit: contain;
+    /* transform : translateY(center); */
     ${media.phone}{
         width: 320px;
         height: 200px;

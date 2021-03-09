@@ -19,7 +19,7 @@ router.post("/register", (req, res) => {
     // 회원가입 정보를 user db에 저장
     user.save((err, doc)=>{
         if(err) return res.json({ success: false, err: err.keyPattern });
-        // console.log(`[SERVER] [USER ROUTER] [REGISTER POST] path: ${req.route.path}, Body: ${JSON.stringify(req.body)} `);
+        console.log(`[SERVER] [USER ROUTER] [REGISTER POST] path: ${req.route.path}, Body: ${JSON.stringify(req.body)} `);
 
         return res.status(200).json({
             success: true
@@ -29,8 +29,6 @@ router.post("/register", (req, res) => {
 
 // 페이지 이동 시, 접근 권환 확인 api
 router.get("/auth", auth, (req, res) => {
-
-    //AdminModel.countToday();
 
     res.status(200).json({
         isAuth: true,
@@ -53,7 +51,7 @@ router.get("/auth", auth, (req, res) => {
 
 // logout api
 router.get("/logout", auth, (req, res) => {
-    // console.log(`[SERVER] [USER ROUTER] [LOGOUT GET] path: ${req.route.path}, Find Model: ${JSON.stringify(req.user)} `);
+    console.log(`[SERVER] [USER ROUTER] [LOGOUT GET] path: ${req.route.path}, Find Model: ${JSON.stringify(req.user)} `);
 
     //db에서 토큰 초기화
     User.findOneAndUpdate( { _id:req.user._id}, {token:"", tokenExp: ""}, (err, doc) => {
@@ -67,6 +65,8 @@ router.get("/logout", auth, (req, res) => {
 
 // login api
 router.post("/login", (req, res) => {
+    console.log("#############");
+    console.log(req.body);
     User.findOne({ email: req.body.email }, (err, user) => {
         // console.log(`[SERVER] [USER ROUTER] [LOGIN POST] path: ${req.route.path}, Find Model: ${JSON.stringify(user)} `);
         // 이메일 등록 여부 확인
@@ -90,6 +90,8 @@ router.post("/login", (req, res) => {
                 if (err) return res.status(400).send(err);
 
                 AdminModel.countToday(user.key);
+                console.log("#############22s");
+                console.log(user.tokenExp);
 
                 //cooke에 token, exp 저장
                 res.cookie("w_authExp", user.tokenExp);

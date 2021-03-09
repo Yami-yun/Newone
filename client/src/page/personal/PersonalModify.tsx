@@ -99,7 +99,7 @@ const PersonalImg = styled.img`
 
 function PersonalModify(){
 
-    const userData = useSelector(state => state.user.auth);
+    const userData = useSelector((state:any) => state.user.auth);
     // upper : 개인페이지 상단 이미지 경로, personal: 개인 페이지 160 x 160 원형 이미지 경로
     const [upperPhoto, setUpperPhoto] = useState<{path:string, name:string}>({path:"", name:""});
     const [preUpperPhoto, setPreUpperPhoto] = useState<{path:string, name:string}>({path:"", name:""});

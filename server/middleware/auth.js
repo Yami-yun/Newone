@@ -21,6 +21,8 @@ const auth = (req, res, next) => {
             // token을 찾았으면
         req.token = token;
         req.user = user;
+
+        
         next();
     });
 

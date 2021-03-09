@@ -98,26 +98,24 @@ const Icon = styled.div`
 
 const PhotoList = styled.article`
     width: 100%;
-    padding: 14px 18px 0px;
+    padding: 14px 8px 0px;
     box-sizing: border-box;
 
-    display: grid;
-    grid-template-columns: repeat(3, 33.333333333333%);
-    column-gap: 10px;
+    display: flex;
+    flex-wrap: wrap;
 
     ${media.tablet}{
-        padding: 14px 12px 0px;
-        column-gap: 6px;
+        padding: 18px 12px 0px;
     }
 
     ${media.phone}{
-        padding: 14px 4px 0px;
-        column-gap: 6px;
+        padding: 4px 5px 0px;
     }
 
 `;
 
 const PhotoLayout = styled.section`
+    margin-bottom: 6px;
     &:hover ${Icon}{
         color: #c4c4c4;
     }
@@ -126,17 +124,20 @@ const PhotoLayout = styled.section`
 const Photo = styled.img`
     width: 300px;
     height: 300px;
+    margin : 0px 14px;
     border-radius: 8px;
     cursor: pointer;
 
     ${media.tablet}{
-        width: 188px;
-        height: 188px;
+        width: 160px;
+        height: 160px;
+        margin : 0px 16px;
     }
 
     ${media.phone}{
-        width: 100px;
-        height: 100px;
+        width: 92px;
+        height: 92px;
+        margin : 0px 7px;
     }
 `;
 

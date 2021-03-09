@@ -21,7 +21,7 @@ const SearchBox = styled.article`
 
 const SearchInput = styled.input`
     width: 88%;
-    height:20px;
+    height:21px;
     padding: 6px 0.4em 0;
     color:#1464A0;
     
@@ -143,8 +143,8 @@ function AdminDataList({onDeleteHandler, data, type, title}:Props){
             {/* 리스트 내용 */}
             <DataList>
                 {data && data.map((tmp:any, index:number)=>{
-                    if(((searchTxt !== tmp.authorName) && (searchTxt !== tmp?.title)) && isSearch) return ;
-                    if((paging * SHOW_MAX_DATA) <= index || ((paging-1) * SHOW_MAX_DATA) > index) return ;
+                    if(((searchTxt !== tmp.authorName) && (searchTxt !== tmp?.title)) && isSearch) return;
+                    if((paging * SHOW_MAX_DATA) <= index || ((paging-1) * SHOW_MAX_DATA) > index) return;
 
                     return(<DataListRow key={index}>
                         {type === "PHOTO" && <DataListItem style={{width:"50%"}} >{tmp?.title}</DataListItem>}

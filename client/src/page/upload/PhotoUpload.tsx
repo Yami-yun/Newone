@@ -36,7 +36,7 @@ function PhotoUpload(){
     const history = useHistory();
 
     // 사용자의 데이터를 가져온다.
-    const userData = useSelector(state => state.user.auth);
+    const userData = useSelector((state:any) => state.user.auth);
     console.log(userData);
 
     // 이미지 드롭박스 구간에서 이미지를 드롭하거나 이미지를 선택했을 때
@@ -144,10 +144,10 @@ function PhotoUpload(){
                     <WhiteInputLabel>Tag</WhiteInputLabel>
                     <TagList>
                         <InputBox 
-                        defaultValue={uploadForm.tag} onChange={onTagHandler} 
+                        value={uploadForm.tag} onChange={onTagHandler} 
                         style={{ marginBottom: 0, width: 100, display:"flex", justifyContent:"center", fontSize:12}} 
-                        placeholder="# 태그 입력" 
-                        maxLength={10}
+                        placeholder="# 태그입력" 
+                        maxLength={8}
                         onKeyPress={addTagHandler}/>
                         { 
                             uploadForm.tagList.map( (tag, index)=> (<TagBox key={index}>{`# ${tag}`}</TagBox>) )

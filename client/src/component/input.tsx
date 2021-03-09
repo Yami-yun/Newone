@@ -30,11 +30,19 @@ export const InputBox=styled.input`
     height: 40px;
     margin-bottom: 14px;
     padding: 0 20px;
-    font-size: 1rem;
+    font-size: 0.9rem;
+    font-weight: 700;
 
-
+    color: #00A0FF;
     background: #ffffff;
     border-radius: 8px;
+
+    &::placeholder{
+        font-size: 0.8rem;
+        color: #00A0FF;
+        font-weight: 500;
+    }
+
 `;
 
 // 하얀색 textarea
@@ -55,5 +63,9 @@ export const InputParagraphBox=styled.textarea`
 
     ${media.phone}{
         width: 86%;
+    }
+
+    &::placeholder{
+        color: #00A0FF;
     }
 `;

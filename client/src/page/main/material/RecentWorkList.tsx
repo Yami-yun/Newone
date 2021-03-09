@@ -7,7 +7,7 @@ import { IRecentPhotoList } from 'page/main/material/MainInterface';
 
 const Whole = styled.section`
     width: 1000px;
-    padding: 20px 22px 40px;
+    padding: 20px 24px 40px 20px;
     margin-top: 95px;
 
     border: 1px solid #E8E8E8;
@@ -18,6 +18,7 @@ const Whole = styled.section`
     }
     ${media.phone}{
         width: 340px;
+        padding: 20px 23px 40px 21px;
     }
 
     ${media.mini}{
@@ -31,6 +32,10 @@ const BoxTitle = styled.h1`
     font-size: 1.4rem;
     color: #00A0FF;
     margin-left: 1em;
+
+    ${media.phone}{
+        font-weight: 600;
+    }
 
 `;
 
@@ -57,16 +62,18 @@ const RecentWorkImgBox = styled.img`
     border: 3px solid #ccf5fd;
     border-radius: 12px;
 
+    margin : 0 6px;
+
     object-fit : contain;
     border-radius: 8px;
 
     ${media.tablet}{
-        width: 140px;
-        height: 140px;
+        width: 138px;
+        height: 138px;
     }
     ${media.phone}{
-        width: 90px;
-        height: 90px;
+        width: 86px;
+        height: 86px;
     }
 `;
 

@@ -77,7 +77,7 @@ const ChartTitle=styled.h1`
 
 function Admin(){
     const dispatch = useDispatch();
-    const userData = useSelector(state => state.user.auth);             // 현재 등록한 유저 정보
+    const userData = useSelector((state:any) => state.user.auth);             // 현재 등록한 유저 정보
     const [visitorData, setVisitorData] = useState<any>();              // api로부터 가져온 일일 방문자 수 데이터
     const [allUserData, setAllUserData] = useState<any>();
     const [allPhotoData, setAllPhotoData] = useState<any>();

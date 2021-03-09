@@ -22,6 +22,10 @@ const Whole = styled.header`
     ${media.phone}{
         width: 340px;
     }
+
+    ${media.mini}{
+        width: 300px;
+    }
     /* border : 1px solid; */
 `;
 

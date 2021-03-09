@@ -151,7 +151,7 @@ function Comment({photoInfo}:{photoInfo:IPhotoInfo | undefined}){
     const [modifyCommentTxt, setModifyCommentTxt] = useState<string>("");       // 변경된 텍스트 문구 
     const [userKey, setUserKey] = useState<number>(0);                          // 해당 작품 페이지에 유저가 코멘트를 달았는지를 확인할 키값
     const dispatch = useDispatch();
-    const commentStatus = useSelector(state => state.comment);
+    const commentStatus = useSelector((state:any) => state.comment);
 
     const onCommentHandler = (e:any) => { setComment(e.target.value); };
     const onCommentCountHandler = () => { setCommentCount(commentCount+1) };

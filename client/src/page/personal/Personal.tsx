@@ -36,9 +36,9 @@ const PageLayout=styled.section`
 
 function Personal(){
     const match = useParams<{id:string}>();
-    const userData = useSelector(state => state.user.auth);
+    const userData = useSelector((state:any) => state.user.auth);
     const [personalInfo, setPersonalInfo] = useState<IPersonalInfoProps>();
-    const status = useSelector(state => state.photo);
+    const status = useSelector((state:any) => state.photo);
 
 
     useEffect(() => {

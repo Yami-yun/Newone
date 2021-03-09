@@ -12,7 +12,7 @@ export async function addComment(body:any){
 };
 
 export async function getComment(_id:any){
-    const request = await axios.get(`${CLIENT_PATH}api/comment/get`, {params: {_id:_id}}).then(
+    const request = await axios.get(`${CLIENT_PATH}api/comment/get`, {params: {_id:_id}, headers : {'Pragma': 'no-cache'}}).then(
         response => response.data
     );
 
@@ -20,7 +20,7 @@ export async function getComment(_id:any){
 };
 
 export async function deleteComment(body:any){
-    const request = await axios.delete(`${CLIENT_PATH}api/comment/delete`, {data:body}).then(
+    const request = await axios.delete(`${CLIENT_PATH}api/comment/delete`, {data:body, headers : {'Pragma': 'no-cache'}}).then(
         response => response.data
     );
 

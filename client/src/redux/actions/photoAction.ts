@@ -167,7 +167,7 @@ export async function getIsNew(body:{_id:string | undefined}){
 
 // 추천 작품 리스트 가져오기 api
 export async function getRecommendPhoto(_id:any, tagList:any){
-    const request = await axios.get('http://localhost:3000/api/photo/recommend_photo', {params: {_id:_id, tagList: tagList}}).then(
+    const request = await axios.get('http://localhost:3000/api/photo/recommend_photo', {params: {_id:_id, tagList: tagList}, headers : {'Pragma': 'no-cache'} }).then(
         response => response.data
     );
 
@@ -179,7 +179,7 @@ export async function getRecommendPhoto(_id:any, tagList:any){
 
 // 오늘의 랭킹 리스트 가져오기 api
 export async function getTodayLank(){
-    const request = await axios.get('http://localhost:3000/api/photo/get_today_lank').then(
+    const request = await axios.get('http://localhost:3000/api/photo/get_today_lank', {headers : {'Pragma': 'no-cache'}} ).then(
         response => response.data
     );
 
@@ -191,7 +191,7 @@ export async function getTodayLank(){
 
 // 인기 태그 가져오기 api
 export async function getFamousTag(){
-    const request = await axios.get('http://localhost:3000/api/photo/famous_tag_list').then(
+    const request = await axios.get('http://localhost:3000/api/photo/famous_tag_list', {headers : {'Pragma': 'no-cache'}}).then(
         response => response.data
     );
 
@@ -203,7 +203,8 @@ export async function getFamousTag(){
 
 // 최근 등록한 작품 가져오기 api
 export async function getRecentPhoto(category:number){
-    const request = await axios.get('http://localhost:3000/api/photo/recent_photo', {params: {category: category}}).then(
+    
+    const request = await axios.get('http://localhost:3000/api/photo/recent_photo', {params: {category: category}, headers : {'Pragma': 'no-cache'} }).then(
         response => response.data
     );
 
@@ -215,7 +216,7 @@ export async function getRecentPhoto(category:number){
 
 // 검색한 단어로 관련된 작품 목록 가져오기 api
 export async function searchPhoto(searchTxt:string){
-    const request = await axios.get('http://localhost:3000/api/photo/search_photo', {params: {searchTxt: searchTxt}}).then(
+    const request = await axios.get('http://localhost:3000/api/photo/search_photo', {params: {searchTxt: searchTxt}, headers : {'Pragma': 'no-cache'} } ).then(
         response => response.data
     );
 
@@ -227,7 +228,7 @@ export async function searchPhoto(searchTxt:string){
 
 // 검색한 단어로 관련된 태그가 있는 작품 리스트 가져오기 api
 export async function searchTag(searchTxt:string){
-    const request = await axios.get('http://localhost:3000/api/photo/search_tag', {params: {searchTxt: searchTxt}}).then(
+    const request = await axios.get('http://localhost:3000/api/photo/search_tag', {params: {searchTxt: searchTxt}, headers : {'Pragma': 'no-cache'} } ).then(
         response => response.data
     );
 

@@ -58,6 +58,8 @@ const GlobalStyle = createGlobalStyle`
         resize : vertical;
     };
 
+    
+
     a{
         text-decoration: none;
         color: #00A0FF;

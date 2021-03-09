@@ -9,30 +9,51 @@ import { useDispatch } from 'react-redux';
 import { media } from 'component/customMediaQuery';
 
 const Whole = styled.section`
-    width: 140px;
-    height: 60px;
+    width: 240px;
+    height: 56px;
     
     display: flex;
     justify-content:flex-end;
     align-items: center;
 
     ${media.phone}{
-        width: 100px;
+        width: 114px;
+        height: 40px;
+    }
+
+    ${media.mini}{
+        width: 110px;
         height: 40px;
     }
 `;
 
-const IconBox = styled.button`
-    width: 35px;
-    height: 35px;
-    margin-left: 0.6em;
+const IconBox = styled.div`
+    width: 44px;
+    height: 44px;
+    margin-left: 0.3em;
 
+    text-align: center;
     font-size: 2.5rem;
+    line-height: 44px;
     cursor: pointer;
 
+    ${media.tablet}{
+        width: 40px;
+        height: 40px;
+        line-height: 40px;
+    }
+
     ${media.phone}{
-        font-size: 2rem;
-        margin-left: 0.6em;
+        width: 36px;
+        height: 32px;
+        line-height: 32px;
+        font-size: 2.8rem;
+    }
+
+    ${media.mini}{
+        margin-left: 0em;
+        width: 34px;
+        font-size: 2.4rem;
     }
 `;
 
@@ -40,6 +61,7 @@ const PersonalIconImg = styled.img`
     width: 35px;
     height: 35px;
     border-radius: 18px;
+    
 
     ${media.phone}{
         width: 30px;
@@ -47,18 +69,21 @@ const PersonalIconImg = styled.img`
     }
 `;
 
-const PersonalMenuBox = styled.ul`
+const PersonalMenuBox = styled.div`
     position: absolute;
-    top: 48px;
+    
+    top: 54px;
     left: -80px;
     width: 120px;
-    z-index:10;
+
+    z-index: 6;
 
     font-size: 1rem;
+    text-align: center;
     box-shadow: 2px 2px 3px 1px #9e9e9e;
     background: #f7fafa;
-
     animation: amenu 0.3s ease-in-out;
+
 
     ${media.phone}{
         width:90px;
@@ -73,6 +98,7 @@ const PersonalMenuBox = styled.ul`
             opacity: 1;
         }
     }
+
 `;
 
 const AlarmBox = styled.div`
@@ -86,6 +112,11 @@ const AlarmBox = styled.div`
     overflow-y: auto;
     box-shadow: 2px 2px 3px 1px #9e9e9e;
     background: #f7fafa; 
+
+    border: 1px solid black;
+
+    scrollbar-face-color: #aaaaaa;
+    scrollbar-track-color: #f7fafa;
 
     &::-webkit-scrollbar {width: 14px;}
     &::-webkit-scrollbar-thumb{
@@ -119,10 +150,9 @@ const AlarmTxt = styled.p`
     }
 `;
 
-const PersonalMenuItem = styled.li`
-    margin: 12px 0;
-
-    font-weight: 600;
+const PersonalMenuItem = styled.div`
+    margin: 4px 0;
+    font-weight: 500;
     color: #38b6ff;
 
     &:hover{
@@ -161,6 +191,7 @@ function HeaderIconList({userData}:any) {
 
     // 헤더에서 개인 이미지 버튼 클릭시 미니 메뉴 버튼 on / off
     const showPersonalMenu = ():void => {
+        console.log(isPersonalMenu);
         setIsPersonalMenu(!isPersonalMenu);
         setIsShowAlarm(false);
     };
@@ -219,28 +250,37 @@ function HeaderIconList({userData}:any) {
                     </AlarmBox>}
             </IconBox>}
 
+            <div style={{position:"relative"}}>
+
+            </div>
+
             {/* Personal Icon */}
-            <IconBox style={{position: "relative"}} onClick={showPersonalMenu}>
+            <IconBox onClick={showPersonalMenu} style={{position:"relative"}}>
                 {isPersonalMenu && <PersonalMenuBox>
-                    {userData.role===3 && <Link to={`/admin`}>
+                    {userData?.role===3 && <Link to={`/admin`}>
                         <PersonalMenuItem onClick={()=>{setIsPersonalMenu(false);} }>관리자 페이지</PersonalMenuItem>
                     </Link>}
+
                     {/* 개인 페이지 이동 */}
                     <Link to={`/personal/${userData?.key}`}>
                         <PersonalMenuItem onClick={()=>{setIsPersonalMenu(false);} }>마이 페이지</PersonalMenuItem>
                     </Link>
+
                     {/* 작품 업로드 페이지 이동 */}
                     <Link to={'/upload'}>
                         <PersonalMenuItem>작품 등록</PersonalMenuItem>
                     </Link>
+                    
                     {/* 로그아웃 / 로그인 */}
                     {isLogin ? 
                     <Link to={'/'}><PersonalMenuItem onClick={logout}>로그 아웃</PersonalMenuItem> </Link>
                     : <Link to={'/login'}><PersonalMenuItem>로그인</PersonalMenuItem></Link>}
                 </PersonalMenuBox>}
-                <PersonalIconImg src={defaultImg} alt="default"/>
 
+
+                <PersonalIconImg src={defaultImg} alt="default"/>
             </IconBox>
+            
         </Whole>
     )
 }

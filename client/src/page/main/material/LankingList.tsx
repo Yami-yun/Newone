@@ -6,6 +6,8 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { CLIENT_PATH, SERVER_PATH } from 'config/path';
 import { media } from 'component/customMediaQuery';
 
+import first from 'img/first.png';
+
 const Whole = styled.section`
     width: 1000px;
     height: 323px;
@@ -18,12 +20,11 @@ const Whole = styled.section`
     ${media.tablet}{
         width: 650px;
         height: 250px;
-        margin-top: 160px;
+        margin-top: 200px;
     }
 
     ${media.phone}{
         width: 340px;
-        margin-top: 200px;
         padding: 0px;
     }
 
@@ -45,6 +46,30 @@ const LankingImgList = styled.div`
     width: 96.6%;
     display: flex;
     overflow-x: hidden;
+
+    & a .first{
+        position: absolute;
+        top: -34px;
+        left: 0px;
+        width: 88px;
+        height: 88px;
+
+        ${media.tablet}{
+            top: -28px;
+            left: 7px;
+            width: 72px;
+            height: 72px;
+        }
+
+        ${media.phone}{
+            top: -28px;
+            left: 5px;
+            width: 62px;
+            height: 62px;
+        }
+    }
+
+    
 `;
 
 const LankingImgBox = styled.img`
@@ -67,6 +92,8 @@ const LankingImgBox = styled.img`
         width: 100px;
         height: 100px;
     }
+
+    
 
 `;
 
@@ -110,6 +137,7 @@ function LankingList({lankList}:any) {
                     <LankingImgList ref={scrollRef}>
                         { lankList && lankList.map((tmp:any, index:number)=>(
                             <a key={index} href={`${CLIENT_PATH}photo/${tmp._id}`}>
+                                {index === 0 && <img className={'first'} src={first}/>}
                                 <LankingImgBox src={`${SERVER_PATH}${tmp.photoPath}`}/>
                             </a>
                         )) }

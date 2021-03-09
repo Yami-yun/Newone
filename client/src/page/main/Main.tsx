@@ -38,12 +38,13 @@ const PageLayout=styled.section`
 
 // 메인 화면 컴포넌트
 function Main(){
-    const userData = useSelector(state => state.user.auth);
+    const userData = useSelector((state:any) => state.user.auth);
     const [recentPhotoList, setRecentPhotoList] = useState<IRecentPhotoList[]>([]);       // 최근 작품 리스트 상태 변수
     const [lankList, setLankList] = useState<any>([]);                                              // 금일 작품 랭킹 리스트 상태 변수
     const [famousTagList, setFamousTagList] = useState<IFamousTagList[]>([]);         // 인기 태그 리스트 상태 변수
     const [category, setCategory] = useState<number>(0);                                            // 선택된 카테고리 상태 변수
     const dispatch = useDispatch();
+    console.log(document.cookie);
 
 
     // 카테고리에 따른 최근 작품, 오늘의 랭킹, 인기 태그를 가져온다.

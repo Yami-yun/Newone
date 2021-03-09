@@ -71,7 +71,7 @@ const LoadingCircle = styled.div<{delay:number}>`
 // 검색 결과 화면 컴포넌트
 function SearchPage(){
     const {text} = useParams<{text:string}>();
-    const userData = useSelector(state => state.user.auth);
+    const userData = useSelector((state:any) => state.user.auth);
     const dispatch = useDispatch();
     const [searchPhotoList, setSearchPhotoList] = useState<any>(null);
     const [searchAuthorList, setSearchAuthorList] = useState<any>(null);

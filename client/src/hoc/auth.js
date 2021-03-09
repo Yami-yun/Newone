@@ -12,7 +12,6 @@ export default function(SpecificComponent, option){
             dispatch(auth()).then(response=>{
                 /// option 0 : 로그인 상관없는 페이지,  1 : 로그인 필요 페이지,  2: 로그인한 유저는 출입 불가능 페이지 , 3: 관리자 페이지
                 if(option !== 0){
-
                     // 사이트 관리자가 아닌 자가 관리자 페이지에 접근할 경우.
                     if(option === 3 && response.payload.role !== 3){
                             props.history.push('/');
