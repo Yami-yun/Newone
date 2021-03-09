@@ -203,7 +203,7 @@ export async function getFamousTag(){
 
 // 최근 등록한 작품 가져오기 api
 export async function getRecentPhoto(category:number){
-    
+    //a
     const request = await axios.get('http://localhost:3000/api/photo/recent_photo', {params: {category: category}, headers : {'Pragma': 'no-cache'} }).then(
         response => response.data
     );
