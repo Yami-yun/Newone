@@ -5,9 +5,9 @@ import { useParams } from 'react-router-dom';
 import Header from 'component/Header';
 import { useDispatch, useSelector } from 'react-redux';
 import SearchList from 'page/search/material/SearchList';
-import { searchPhoto, searchTag } from 'redux/actions/photoAction';
-import { searchAuthor } from 'redux/actions/userAction';
 import Footer from 'component/Footer';
+import { callAPI } from 'redux/actions/action';
+import { SEARCH_AUTHOR, SEARCH_PHOTO, SEARCH_TAG } from 'redux/actions/types';
 
 const Whole=styled.section``;
 
@@ -80,25 +80,25 @@ function SearchPage(){
 
     useEffect(() => {
         // setIsLoading(0);
-        searchPhoto(text).then(
-            response=> {
+
+        callAPI('GET', 'photo/search_photo', SEARCH_PHOTO, {searchTxt: text}).then(
+            response => {
                 if(response.payload.success) setSearchPhotoList(response.payload.result);
                 dispatch(response);
-            });
+        });
 
-        searchAuthor(text).then(
-            response=> {
+        callAPI('GET', 'photo/search_photo', SEARCH_AUTHOR, {searchTxt: text}).then(
+            response => {
                 if(response.payload.success) setSearchAuthorList(response.payload.result);
                 dispatch(response);
-            });
+        });
 
-        searchTag(text).then(
-            response=> {
+        callAPI('GET', 'photo/search_photo', SEARCH_TAG, {searchTxt: text}).then(
+            response => {
                 if(response.payload.success) setSearchTagList(response.payload.result);
                 dispatch(response);
                 setIsLoading(true);
-                
-            });
+        });
 
     }, [text]);
     

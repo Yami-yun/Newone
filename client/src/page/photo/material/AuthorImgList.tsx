@@ -4,10 +4,11 @@ import GlobalStyle from 'globalStyles';
 import { SERVER_PATH, CLIENT_PATH } from 'config/path';
 import { PhotoBlueBtn } from 'component/button';
 import defaultImg from 'img/defaultPersonalImg.png';
-import { followUser, getIsFollow } from 'redux/actions/userAction';
 import { media } from 'component/customMediaQuery';
 import { useDispatch } from 'react-redux';
 import { IAuthorImgListProps, IPhoto } from 'page/photo/material/PhotoInterface';
+import { FOLLOW_USER, GET_IS_FOLLOW_USER } from 'redux/actions/types';
+import { callAPI } from 'redux/actions/action';
 
 const Whole=styled.section`
     width: 738px;
@@ -73,14 +74,13 @@ function AuthorImgList({ _key,  personalImgPath, authorName, photo}:IAuthorImgLi
     useEffect(() => {
         // 해당 작품의 작가와의 사용자간의 팔로우 여부 확인
         if(_key){
-            getIsFollow({key : _key}).then(
-                response=>{
+            callAPI('POST', 'users/is_follow', GET_IS_FOLLOW_USER, {key : _key}).then(
+                response => {
                     if(response.payload.success){
                         setIsFollow(response.payload.result);
                         dispatch(response);
                     }
-                }
-            );
+            });
         }
     }, [_key]);
 
@@ -91,10 +91,11 @@ function AuthorImgList({ _key,  personalImgPath, authorName, photo}:IAuthorImgLi
             follow: !isFollow,
             key : _key,
         };
-        followUser(body).then(
+        callAPI('POST', 'users/follow', FOLLOW_USER, body).then(
             response => {
                 console.log(response);
         });
+
     };
     return (
     <>

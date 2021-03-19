@@ -249,7 +249,7 @@ router.get('/recommend_photo', (req, res)=>{
     // console.log(`[SERVER] [PHOTO ROUTER] [RECOMMEND PHOTO GET] path: ${req.route.path}, BODY : ${JSON.stringify(req.query.tagList)} `);
     
     // 해당 페이지 작품에 있는 모든 테그와 관련된 작품을 추출한다.
-    PhotoModel.find({"tagList": {$all: req.query.tagList}}, (err, doc)=>{
+    PhotoModel.find({"tagList": {$all: JSON.parse(req.query.data)?.tagList}}, (err, doc)=>{
         if(err) return res.json({success:false, err});
 
         return res.json({success:true, result: doc});
@@ -291,12 +291,10 @@ router.get('/recent_photo', (req, res)=>{
     // main에서 선택한 category 기준으로 최근 등록 작품 목록 반환
 
     console.log("##################111");
-    console.log(req.query.category);
+    console.log(req.query.data);
 
-    PhotoModel.find({photoType: req.query.category}, {_id:1, photoPath:1}, (err, doc)=>{
+    PhotoModel.find({photoType: req.query.data}, {_id:1, photoPath:1}, (err, doc)=>{
         if(err) return res.json({success:false, err});
-
-        
 
         return res.json({success:true, result: doc});
     })
@@ -325,7 +323,7 @@ router.get('/famous_tag_list', (req, res)=>{
 // 작품 search api
 router.get('/search_photo', (req, res)=>{
     // 검색단어와 제목이 유사한 작품 db를 뽑아온다.
-    PhotoModel.find({title: {$regex: ".*" + req.query.searchTxt + ".*"} }, (err, doc)=>{
+    PhotoModel.find({title: {$regex: ".*" + JSON.parse(req.query.data).searchTxt + ".*"} }, (err, doc)=>{
             if(err) return res.json({ success:false, err });
 
             return res.json({ success:true, result: doc });

@@ -8,9 +8,10 @@ import { Link } from 'react-router-dom';
 import { faTwitter } from "@fortawesome/free-brands-svg-icons";
 import { faHome } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { followUser, getIsFollow } from 'redux/actions/userAction';
 import { media } from 'component/customMediaQuery';
 import { IPersonalInfoProps } from 'page/personal/material/PersonalInterface';
+import { callAPI } from 'redux/actions/action';
+import { FOLLOW_USER, GET_IS_FOLLOW_USER } from 'redux/actions/types';
 
 const Whole=styled.section`
     display:flex;
@@ -187,21 +188,32 @@ function PersonalInfo({personalInfo}:{personalInfo:IPersonalInfoProps | undefine
             follow: !isFollow,
             key : personalInfo?.key,
         };
-        followUser(body).then(
-            response => {
+        callAPI('POST', 'users/follow', FOLLOW_USER, body).then(
+            response=>{
                 console.log(response);
-        });
+            });
+            
     };
 
     useEffect(() => {
-        // 현재 작가 페이지의 팔로우 이력을 가져온다.
-        getIsFollow({key : personalInfo?.key,}).then(
+
+        callAPI('POST', 'users/is_follow', GET_IS_FOLLOW_USER, {key : personalInfo?.key,}).then(
             response=>{
                 if(response.payload.success){
                     setIsFollow(response.payload.result);
+                }else{
+                    alert('잘못된 접근입니다.');
                 }
-            }
-        );
+            });
+        // 현재 작가 페이지의 팔로우 이력을 가져온다.
+        // getIsFollow({key : personalInfo?.key,}).then(
+        //     response=>{
+        //         if(response.payload.success){
+        //             setIsFollow(response.payload.result);
+        //         }
+        //     }
+        // );
+
     }, [personalInfo?.key]);
     
     return (

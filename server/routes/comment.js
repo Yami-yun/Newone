@@ -32,7 +32,7 @@ router.get("/get", (req, res)=>{
         if(err) return res.json({success: false, err});
         return res.json({success: true, result: docs});
     })
-    .where('photoId',req.query._id)
+    .where('photoId',JSON.parse(req.query.data)._id)
     .sort({ createDate: -1 })
     .limit(100);
 

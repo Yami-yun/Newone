@@ -8,8 +8,9 @@ import FamousTagList from 'page/main/material/FamousTagList';
 import RecentWorkList from 'page/main/material/RecentWorkList';
 import Footer from 'component/Footer';
 import { useSelector, useDispatch } from'react-redux';
-import { getRecentPhoto, getTodayLank, getFamousTag } from 'redux/actions/photoAction';
 import { IFamousTagList, IRecentPhotoList } from 'page/main/material/MainInterface';
+import { callAPI } from 'redux/actions/action';
+import { GET_FAMOUS_TAG_LIST, GET_RECENT_PHOTO, GET_TODAY_LANK } from 'redux/actions/types';
 
 const TopLayout=styled.section`
     padding: 20px 0;
@@ -49,30 +50,38 @@ function Main(){
 
     // 카테고리에 따른 최근 작품, 오늘의 랭킹, 인기 태그를 가져온다.
     useEffect(() => {
-
-        getRecentPhoto(category).then(
+        // 작품 최신 정보 리스트
+        callAPI("GET", "photo/recent_photo", GET_RECENT_PHOTO, category).then(
             response => {
                 if(response.payload.success){
                     setRecentPhotoList(response.payload.result);
                     dispatch(response);
+                }else{
+                    alert('잘못된 접근입니다.');
                 }
-            });
+            })
 
-        getTodayLank().then(
+        // 오늘 랭킹 작품 리스트
+        callAPI("GET", "photo/get_today_lank", GET_TODAY_LANK).then(
             response => {
                 if(response.payload.success){
                     setLankList(response.payload.result);
                     dispatch(response);
+                }else{
+                    alert('잘못된 접근입니다.');
                 }
-            });
+            })
 
-        getFamousTag().then(
+        // 인기 태그 리스트
+        callAPI("GET", "photo/famous_tag_list", GET_FAMOUS_TAG_LIST).then(
             response => {
                 if(response.payload.success){
                     setFamousTagList(response.payload.result);
                     dispatch(response);
+                }else{
+                    alert('잘못된 접근입니다.');
                 }
-            });
+            })
 
     }, [category]);
 

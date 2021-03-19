@@ -4,9 +4,10 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import styled from 'styled-components';
 import defaultImg from '../img/defaultPersonalImg.png';
 import { Link } from 'react-router-dom';
-import { logoutUser } from 'redux/actions/userAction';
 import { useDispatch } from 'react-redux';
 import { media } from 'component/customMediaQuery';
+import { callAPI } from 'redux/actions/action';
+import { LOGOUT_USER } from 'redux/actions/types';
 
 const Whole = styled.section`
     width: 240px;
@@ -174,11 +175,12 @@ function HeaderIconList({userData}:any) {
 
     // 로그아웃 아이콘 클릭 시, 로그아웃 실행.
     const logout = ():void => {
-        logoutUser().then(
+        callAPI('GET', 'users/logout', LOGOUT_USER).then(
             response => {
                 dispatch(response);
             }
         );
+
         setIsLogin(false);
         setIsPersonalMenu(false);
     };

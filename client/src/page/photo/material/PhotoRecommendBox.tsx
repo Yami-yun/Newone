@@ -1,7 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
 import GlobalStyle from 'globalStyles';
-import { BlueBtn } from 'component/button';
 import {SERVER_PATH, CLIENT_PATH} from 'config/path';
 import { media } from 'component/customMediaQuery';
 

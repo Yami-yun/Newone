@@ -3,7 +3,6 @@ import GlobalStyle from 'globalStyles';
 import Header from 'component/Header';
 import { InputBox, InputParagraphBox, WhiteInputLabel } from 'component/input';
 import { BlueBtn, WhiteBtn } from 'component/button';
-import { tmpPhotoDelete, tmpPhotoUpload, getPhotoInfo, modifyPhoto } from 'redux/actions/photoAction';
 import { useDropzone } from 'react-dropzone';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory } from 'react-router';
@@ -24,6 +23,8 @@ import {
     initPhotoForm, 
     PhotoFormType  
 } from './component/UploadUI';
+import { callAPI } from 'redux/actions/action';
+import { GET_INFO_PHOTO, MODIFY_PHOTO, TMP_PHOTO_DELETE } from 'redux/actions/types';
 
 // 작품 변경 페이지 컴포넌트
 function PhotoModify(){
@@ -40,7 +41,7 @@ function PhotoModify(){
 
     useEffect(() => {
         // 수정할 photo info를 가져옴
-        getPhotoInfo({photoId:photoData?.id}).then(
+        callAPI('POST', 'photo/photo_info', GET_INFO_PHOTO, {photoId:photoData?.id}).then(
             response => {
                 const photoInfo = response.payload;
                 const result = photoInfo.result;
@@ -58,7 +59,27 @@ function PhotoModify(){
                         });
                 }
                 disPatch(response);
-            })
+        });
+
+        // getPhotoInfo({photoId:photoData?.id}).then(
+        //     response => {
+        //         const photoInfo = response.payload;
+        //         const result = photoInfo.result;
+
+        //         if(photoInfo.success){
+        //             setUploadForm({ ...uploadForm, 
+        //                 title: result.title,
+        //                 tagList: result.tagList,
+        //                 description: result.description,
+        //                 photoType: result.photoType,
+        //             });
+        //             setPhotoForm({...photoForm,
+        //                     photoPath: result.photoPath,
+        //                     photoName: result.photoName,
+        //                 });
+        //         }
+        //         disPatch(response);
+        //     })
     }, []);
 
     // 이미지 드롭박스 구간에서 이미지를 드롭하거나 이미지를 선택했을 때
@@ -76,19 +97,18 @@ function PhotoModify(){
         if(["jpg", "png", "jpeg", "svg"].includes(ext)){
 
             const body = {photoName:photoForm.photoName, photoPath:photoForm.photoPath};
-            tmpPhotoDelete(body)
-            .then(response=>{
-                //서버로 이미지 임시 저장
-                tmpPhotoUpload({formData, config}).then(
-                    response => {
-                        console.log(response);
-                        if(response?.payload?.success){
-                            setPhotoForm({ ...uploadForm,
-                                photoPath: response.payload.filePath,
-                                photoName: response.payload.fileName,
-                            });
-                            setIsPhotoChange(true);
-                        }
+
+            callAPI('DELETE', 'photo/tmp_photo', TMP_PHOTO_DELETE, body).then(
+                response => {
+                    callAPI('POST', 'photo/upload', GET_INFO_PHOTO, formData, config).then(
+                        response => {
+                            if(response?.payload?.success){
+                                setPhotoForm({ ...uploadForm,
+                                    photoPath: response.payload.filePath,
+                                    photoName: response.payload.fileName,
+                                });
+                                setIsPhotoChange(true);
+                            }
                     });
             });
         }
@@ -145,7 +165,7 @@ function PhotoModify(){
             isPhotoChange,
         };
         
-        modifyPhoto(body).then(
+        callAPI('PATCH', 'photo/modify', MODIFY_PHOTO, body).then(
             response => {
                 if(response.payload.success){
                     // 서버로 전송 성공 시, 개인 페이지로 이동
@@ -154,9 +174,7 @@ function PhotoModify(){
                     alert("DB 저장에 실패했습니다.")
                 }
                 disPatch(response);
-            }
-        );
-
+        });
     };
 
     return (

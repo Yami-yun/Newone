@@ -3,7 +3,6 @@ import styled from 'styled-components';
 import GlobalStyle from 'globalStyles';
 import {InputBox} from 'component/input';
 import { VerifyBtn } from 'component/button';
-import { getVerifiedCode, registerUser } from 'redux/actions/userAction';
 import { useDispatch } from 'react-redux';
 import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -11,6 +10,8 @@ import { Link } from 'react-router-dom';
 import {useHistory} from 'react-router';
 import { media } from 'component/customMediaQuery';
 import background from 'img/background.jpg'
+import { GET_VERIFIED_CODE, REGISTER_USER } from 'redux/actions/types';
+import { callAPI } from 'redux/actions/action';
 
 const Whole=styled.section`
     background-size: cover;
@@ -128,10 +129,10 @@ function Register(){
         // 유저가 인증번호를 수신함
         setIsVerified(1);
 
-        getVerifiedCode({email: registerForm.email, str: "회원가입"}).then(
-        response=> {
-            if(response.payload.success) setCheckVerifiedCode(response.payload.verificationNumber.toString());
-            dispatch(response);
+        callAPI('POST', 'users/get_verified_code', GET_VERIFIED_CODE, {email: registerForm.email, str: "회원가입"}).then(
+            response => {
+                if(response.payload.success) setCheckVerifiedCode(response.payload.verificationNumber.toString());
+                dispatch(response);
         });
 
         return alert('인증 번호가 발송되었습니다.');
@@ -173,19 +174,19 @@ function Register(){
         };
 
         // 서버로 회원가입 형식 보냄
-        registerUser(body)
-        .then(response => {
-            if (response.payload.success) {
-                dispatch(response);
-                history.push("/login");
-            } else {
-                // db 에러 문구에 따라 사용자에게 알림문구 출력
-                if(Object.keys(response.payload.err)[0] === "email"){
-                    alert("이미 중복된 아이디입니다.");
-                }else{
-                    alert("중복된 작가 명입니다.");
-                }                
-            }
+        callAPI('POST', 'users/register', REGISTER_USER, body).then(
+            response => {
+                if (response.payload.success) {
+                    dispatch(response);
+                    history.push("/login");
+                } else {
+                    // db 에러 문구에 따라 사용자에게 알림문구 출력
+                    if(Object.keys(response.payload.err)[0] === "email"){
+                        alert("이미 중복된 아이디입니다.");
+                    }else{
+                        alert("중복된 작가 명입니다.");
+                    }                
+                }
         });
     };
 

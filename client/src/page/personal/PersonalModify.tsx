@@ -14,13 +14,12 @@ import { BlueBtn } from 'component/button';
 
 import { faCamera } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-
-import { useDispatch } from 'react-redux';
 import { useHistory } from 'react-router';
 
 import defaultImg from 'img/defaultPersonalImg.png';
-import { modifiedPersonalInfo } from 'redux/actions/userAction';
 import { media } from 'component/customMediaQuery';
+import { callAPI } from 'redux/actions/action';
+import { MODIFIED_PERSONAL_INFO } from 'redux/actions/types';
 
 
 const TopLayout=styled.section`
@@ -220,7 +219,7 @@ function PersonalModify(){
             homepage,
         };
 
-        modifiedPersonalInfo(body).then(
+        callAPI('PATCH', 'users/personal_info', MODIFIED_PERSONAL_INFO, body).then(
             response => {
                 // 데이터 변경 사항이 success 되면 개인 페이지로 이동
                 if(response.payload.success){
@@ -229,6 +228,7 @@ function PersonalModify(){
                     alert("작가명이 중복됩니다.");
                 }
             });
+
     };
 
     // 프로필 이미지

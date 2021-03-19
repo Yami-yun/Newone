@@ -9,8 +9,9 @@ import Footer from 'component/Footer';
 
 import { useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
-import { getPersonalInfo } from 'redux/actions/personalAction';
 import { IPersonalInfoProps } from 'page/personal/material/PersonalInterface';
+import { callAPI } from 'redux/actions/action';
+import { GET_INFO_PERSONAL } from 'redux/actions/types';
 
 const TopLayout=styled.section`
     padding: 20px 0;
@@ -46,14 +47,15 @@ function Personal(){
             key:match.id,
         };
 
-        getPersonalInfo(body).then(
-            response=> {
+        // 작가 개인 정보 가져오기
+        callAPI('POST', 'users/personal_info', GET_INFO_PERSONAL, body).then(
+            response => {
                 if(response.payload.result){
                     setPersonalInfo(response.payload.result);
+                }else{
+                    alert('잘못된 접근입니다.');
                 }
-            }
-        );
-
+            });
     }, [status?.deletePhoto]);
 
     return (

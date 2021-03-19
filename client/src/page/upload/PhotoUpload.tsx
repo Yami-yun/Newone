@@ -6,7 +6,6 @@ import Footer from 'component/Footer';
 
 import { InputBox, InputParagraphBox, WhiteInputLabel } from 'component/input';
 import { BlueBtn, WhiteBtn } from 'component/button';
-import { addPhoto, tmpPhotoUpload } from 'redux/actions/photoAction';
 import { useDropzone } from 'react-dropzone';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory } from 'react-router';
@@ -27,6 +26,8 @@ import {
     initPhotoForm, 
     PhotoFormType  
 } from './component/UploadUI';
+import { callAPI } from 'redux/actions/action';
+import { ADD_PHOTO, TMP_PHOTO_UPLOAD } from 'redux/actions/types';
 
 // 작품 등록 페이지 컴포넌트
 function PhotoUpload(){
@@ -52,10 +53,10 @@ function PhotoUpload(){
         // 파일 확장자를 통해, 불러온 파일이 이미지 파일인지 여부를 확인한다.
         const ext = acceptedFiles[0].name.split('.')[acceptedFiles[0].name.split('.').length - 1];
         if(["jpg", "png", "jpeg", "svg"].includes(ext)){
-            tmpPhotoUpload({formData, config}).then(
+            callAPI('POST', 'photo/upload', TMP_PHOTO_UPLOAD, formData, config).then(
                 response => {
                     if(response?.payload?.success) setPhotoForm({...photoForm, photoName: response.payload.fileName, photoPath: response.payload.filePath});
-                });
+            });
         }
         // 이미지 파일이 아닐 경우.
         else{ return alert("이미지 파일을 선택해주세요."); }
@@ -103,7 +104,8 @@ function PhotoUpload(){
             photoPath : photoForm.photoPath,
             photoType : uploadForm.photoType,
         };
-        addPhoto(body).then(
+
+        callAPI('POST', 'photo/add', ADD_PHOTO, body).then(
             response => {
                 console.log(response);
                 if(response.payload.success){
@@ -113,7 +115,8 @@ function PhotoUpload(){
                     alert("DB 저장에 실패했습니다.")
                 }
                 disPatch(response);
-            });
+        });
+
     };
 
     return (

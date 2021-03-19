@@ -5,11 +5,12 @@ import {InputBox} from 'component/input';
 import {BlueBtn} from 'component/button';
 import { Link } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
-import { loginUser } from 'redux/actions/userAction';
 import {useHistory} from 'react-router';
 import { media } from 'component/customMediaQuery';
 import background from 'img/background.jpg'
 import loginImg from 'img/login_left_img.jpg'
+import { callAPI } from 'redux/actions/action';
+import { LOGIN_USER } from 'redux/actions/types';
 
 const Whole=styled.section`
     background-size: cover;
@@ -178,23 +179,21 @@ function Login(){
             password,
         };
 
-        // 로그인 api
-        loginUser(body)
-        .then(response => {
+        callAPI('POST', 'users/login', LOGIN_USER, body).then(
+            response=>{
+                if(response.payload.success){
+                    setIsSuccessLogin(true);
+                    setTimeout(()=>{
+                        dispatch(response);
+                        history.push("/");
+                    },800)
+                    
+                }else{
+                    // 로그인 실패 시, 경고 문구 출력
+                    alert(response.payload.message);
+                }
+            });
 
-            // 로그인 성공 시, 로그인 정보 저장 및 main 화면으로 이동
-            if(response.payload.success){
-                setIsSuccessLogin(true);
-                setTimeout(()=>{
-                    dispatch(response);
-                    history.push("/");
-                },800)
-                
-            }else{
-                // 로그인 실패 시, 경고 문구 출력
-                alert(response.payload.message);
-            }
-        });
     };
 
     return (

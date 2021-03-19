@@ -5,7 +5,6 @@ import Header from 'component/Header';
 import Footer from 'component/Footer';
 import AdminDataList from './component/AdminDataList';
 import { useSelector, useDispatch } from 'react-redux';
-import { getData, getAllUserData, deleteUserInfo, getAllPhotoData, deletePhotoInfo } from 'redux/actions/adminAction';
 import { getChartData } from './component/data';
 import {
     canvasW, 
@@ -15,6 +14,8 @@ import {
     Text,
     GetBarW, } from './component/graphMaker';
 import { media } from 'component/customMediaQuery';
+import { callAPI } from 'redux/actions/action';
+import { DELETE_PHOTO_INFO, DELETE_USER_INFO, GET_ALL_PHOTO_DATA, GET_ALL_USER_DATA, GET_DATA } from 'redux/actions/types';
 
 const TopLayout=styled.section`
     padding: 20px 0;
@@ -56,10 +57,7 @@ const PageLayout=styled.section`
     ${media.tablet}{
         display: none;
     }
-
 `;
-
-
 
 const ChartBox=styled.article`
     width: 804px;
@@ -93,17 +91,17 @@ function Admin(){
         const result = window.confirm("[주의!] 해당 유저 정보를 삭제하겠습니까?");
 
         if(result){
-            deleteUserInfo(authorName).then(
-            response => {
-                if(response.payload.success){
-                    const tmp = allUserData.filter((value:any)=>
+            callAPI('DELETE', 'admin/user_info', DELETE_USER_INFO, {authorName}).then(
+                response => {
+                    if(response.payload.success){
+                        const tmp = allUserData.filter((value:any)=>
                         value.authorName !== authorName);
-
+    
                         setAllUserData([...tmp]);
-                    alert('삭제되었습니다.');
-                }
-                else alert('삭제가 실패되었습니다.');
-            });
+                        alert('삭제되었습니다.');
+                    }
+                    else alert('삭제가 실패되었습니다.');
+                });
         }
         else {
             alert('삭제가 취소되었습니다.');
@@ -111,21 +109,21 @@ function Admin(){
     }
 
     const onDeletePhotoInfoHandler = (_id:string) => {
-        // 유저정보 삭제
+        // 포토정보 삭제
         const result = window.confirm("[주의!] 해당 작품 정보를 삭제하겠습니까?");
 
         if(result){
-            deletePhotoInfo({_id:_id}).then(
-            response => {
-                if(response.payload.success){
-                    const tmp = allPhotoData.filter((value:any)=>
-                        value._id !== _id);
-
-                        setAllPhotoData([...tmp]);
-                    alert('삭제되었습니다.');
-                }
-                else alert('삭제가 실패되었습니다.');
-            });
+            callAPI('DELETE', 'admin/photo_info', DELETE_PHOTO_INFO, {_id}).then(
+                response => {
+                    if(response.payload.success){
+                        const tmp = allPhotoData.filter((value:any)=>
+                            value._id !== _id);
+    
+                            setAllPhotoData([...tmp]);
+                        alert('삭제되었습니다.');
+                    }
+                    else alert('삭제가 실패되었습니다.');
+                });
         }
         else {
             alert('삭제가 취소되었습니다.');
@@ -211,30 +209,35 @@ function Admin(){
     
     useEffect(() => {
         // 방문자 수 데이터 불러오기 api
-        getData().then(
+        callAPI('GET', 'admin/data', GET_DATA).then(
             response => {
                 if(response.payload.success){
                     setVisitorData(response.payload.result);
                     dispatch(response);
+                }else{
+                    alert('잘못된 접근입니다.');
                 }
             });
 
         // 모든 유저 데이터 불러오기 api
-        getAllUserData().then(
+        callAPI('GET', 'admin/all_user_data', GET_ALL_USER_DATA).then(
             response => {
-                if(response.payload.success)
-                {
+                if(response.payload.success){
                     setAllUserData(response.payload.result);
                     dispatch(response);
+                }else{
+                    alert('잘못된 접근입니다.');
                 }
             });
 
         // 모든 작품 데이터 불러오기 api
-        getAllPhotoData().then(
+        callAPI('GET', 'admin/all_photo_data', GET_ALL_PHOTO_DATA).then(
             response => {
                 if(response.payload.success){
                     setAllPhotoData(response.payload.result);
                     dispatch(response);
+                }else{
+                    alert('잘못된 접근입니다.');
                 }
             });
 

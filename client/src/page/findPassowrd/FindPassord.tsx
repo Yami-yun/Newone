@@ -3,7 +3,6 @@ import styled from 'styled-components';
 import GlobalStyle from 'globalStyles';
 import {InputBox} from 'component/input';
 import { VerifyBtn } from 'component/button';
-import { getVerifiedCode, modifyPassword } from 'redux/actions/userAction';
 import { useDispatch } from 'react-redux';
 import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -11,6 +10,8 @@ import { Link } from 'react-router-dom';
 import {useHistory} from 'react-router';
 import { media } from 'component/customMediaQuery';
 import background from 'img/background.jpg';
+import { callAPI } from 'redux/actions/action';
+import { GET_VERIFIED_CODE, MODIFY_PASSWORD } from 'redux/actions/types';
 
 const Whole=styled.section`
     background-size: cover;
@@ -126,8 +127,8 @@ function FindPassword(){
 
         setIsVerified(1);
 
-        getVerifiedCode({email: registerForm.email, str: "비밀번호 찾기"}).then(
-        response=> {
+        callAPI('POST', 'users/get_verified_code', GET_VERIFIED_CODE, {email: registerForm.email, str: "비밀번호 찾기"})
+        .then(response => {
             if(response.payload.success) setCheckVerifiedCode(response.payload.verificationNumber.toString());
         });
 
@@ -163,14 +164,16 @@ function FindPassword(){
             password : registerForm.password,
         };
 
-        // 비밀번호 변경 api
-        modifyPassword(body)
+        callAPI('POST', 'users/modify_password', MODIFY_PASSWORD, body)
         .then(response => {
             if (response.payload.success) {
                 dispatch(response);
-                history.push("/login");
+            }else{
+                alert("잘못된 경로입니다.");
             }
+            history.push("/login");
         });
+
     };
 
     // 인증 단계에 따른 인증버튼 UI 바꾸는 함수

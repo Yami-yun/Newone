@@ -8,11 +8,12 @@ import PhotoRecommendBox from './material/PhotoRecommendBox';
 import Comment from 'page/photo/material/Comment';
 import { useDispatch, useSelector } from 'react-redux';
 import { useParams, useHistory } from 'react-router-dom';
-import { getPhotoInfo, getAuthorInfo, getIsNew, getRecommendPhoto } from 'redux/actions/photoAction';
 import { SERVER_PATH } from 'config/path';
 import Footer from 'component/Footer';
 import { media } from 'component/customMediaQuery';
 import { IAuthorInfo, IPhotoInfo } from 'page/photo/material/PhotoInterface';
+import { callAPI } from 'redux/actions/action';
+import { GET_AUTHOR_INFO, GET_INFO_PHOTO, GET_IS_NEW_PHOTO, GET_RECOMMEND_PHOTO } from 'redux/actions/types';
 
 const TopLayout=styled.section`
     padding: 20px 0;
@@ -150,13 +151,12 @@ function Photo(){
         const body = {
             photoId:match.id,
         }
-
-        // 해당 페이지의 작품 정보를 가져온다.
-        getPhotoInfo(body).then(
+        callAPI('POST', 'photo/photo_info', GET_INFO_PHOTO, body).then(
             response=> {
                 if(response.payload.result){
                     setPhotoInfo(response.payload.result);
-                    getAuthorInfo({key:response.payload.result.authorKey}).then(
+
+                    callAPI('POST', 'photo/author_info', GET_AUTHOR_INFO, {key:response.payload.result.authorKey}).then(
                         response=>{
                             if(response.payload.success) setauthorInfo(response.payload.result);
                             dispatch(response);
@@ -167,22 +167,26 @@ function Photo(){
                     alert('해당 페이지를 찾을 수 없습니다.');
                     history.push('/');
                 }
-            }
-        );
+            });
 
-        // 현재 로그인한 사용자가 보고 있는 작품에 new 버튼을 클릭여부를 확인한다.
-        getIsNew({_id: photoInfo?._id}).then(
-            response=>{
+        callAPI('POST', 'photo/is_new', GET_IS_NEW_PHOTO, {_id: photoInfo?._id}).then(
+            response=> {
                 setIsNew(response.payload.result);
                 dispatch(response);
-            }
-        );
 
-        // 현재 작품의 테그와 관련된 작품 추천 리스트를 가져온다.
-        getRecommendPhoto(photoInfo?._id, photoInfo?.tagList).then(
-            response=>{
-                if(response.payload.success) setRecommendPhotoList(response.payload.result);
-                dispatch(response);
+            });
+
+        callAPI('GET', 'photo/recommend_photo', GET_RECOMMEND_PHOTO, {_id:photoInfo?._id, tagList: photoInfo?.tagList}).then(
+            response=> {
+                if(response.payload.success){
+                    console.log(response.payload);
+                    setRecommendPhotoList(response.payload.result);
+                    dispatch(response);
+                }
+                else{
+                    alert('해당 페이지를 찾을 수 없습니다.');
+                    history.push('/');
+                }
             });
 
     }, [isNew]);

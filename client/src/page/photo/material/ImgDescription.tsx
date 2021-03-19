@@ -1,12 +1,13 @@
 import React from 'react';
 import styled, {css} from 'styled-components';
 import GlobalStyle from 'globalStyles';
-import { setPhotoNew } from 'redux/actions/photoAction';
 import {useDispatch} from 'react-redux';
 import {SERVER_PATH, CLIENT_PATH} from 'config/path';
 import defaultImg from 'img/defaultPersonalImg.png';
 import { media } from 'component/customMediaQuery';
 import { IAuthorInfo, IPhotoInfo } from 'page/photo/material/PhotoInterface';
+import { callAPI } from 'redux/actions/action';
+import { SET_NEW_PHOTO } from 'redux/actions/types';
 
 const Whole=styled.section`
     width: 90%;
@@ -127,7 +128,8 @@ function ImgDescription({photoInfo, setIsNew, isNew, authorInfo}:Props){
             isNew:!isNew,
             _id:photoInfo?._id,
         }
-        setPhotoNew(body).then(
+        
+        callAPI('PATCH', 'photo/new', SET_NEW_PHOTO, body).then(
             response => {
                 dispatch(response);
             });

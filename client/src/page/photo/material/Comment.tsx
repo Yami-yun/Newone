@@ -2,15 +2,15 @@ import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import GlobalStyle from 'globalStyles';
 import { PhotoBlueBtn } from 'component/button';
-import { addComment, getComment, deleteComment, modifyComment } from 'redux/actions/commentAction';
 import { SERVER_PATH } from 'config/path';
 import { useDispatch, useSelector } from 'react-redux';
 import { faTrashAlt, faEdit, faCheckCircle } from "@fortawesome/free-regular-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import defaultImg from 'img/defaultPersonalImg.png';
-import {auth} from 'redux/actions/userAction';
 import { media } from 'component/customMediaQuery';
 import { ICommentList, IPhotoInfo } from 'page/photo/material/PhotoInterface';
+import { callAPI } from 'redux/actions/action';
+import { ADD_COMMENT, AUTH_USER, DELETE_COMMENT, GET_COMMENT, MODIFY_COMMENT } from 'redux/actions/types';
 
 const Whole=styled.article`
     width: 738px;
@@ -158,14 +158,16 @@ function Comment({photoInfo}:{photoInfo:IPhotoInfo | undefined}){
 
     // 코멘트 추가함
     const onCommentAdd = () => {
-
         if(!comment) return alert("댓글을 입력해주세요");
-        addComment({comment, photoInfo, }).then(
+
+        callAPI('POST', 'comment/add', ADD_COMMENT, {comment, photoInfo, }).then(
             response => {
                 if(response.payload.success){
                     // 방금 등록한 코멘트가 상단위에 표시되게 추가.
                     setCommentList([response.payload.result, ...commentList]);
                     setComment("");
+                }else{
+                    alert("댓글 등록에 실패하였습니다.");
                 }
                 dispatch(response);
             });
@@ -173,7 +175,7 @@ function Comment({photoInfo}:{photoInfo:IPhotoInfo | undefined}){
 
     // 코멘트 제거
     const onCommentDeleteHandler = (tmp: any) => {
-        deleteComment(tmp).then(
+        callAPI('DELETE', 'comment/delete', DELETE_COMMENT, tmp).then(
             response => {
                 dispatch(response);
             });
@@ -185,8 +187,9 @@ function Comment({photoInfo}:{photoInfo:IPhotoInfo | undefined}){
     // 코멘트 변경 완료
     const onCommentModifyCompleteHandler = (tmp: any) => { 
         onCommentModifyHandler(-1); 
-        modifyComment({_id:tmp._id, authorKey:tmp.authorKey, modifyCommentTxt,}).then(
-            response=>{
+
+        callAPI('PATCH', 'comment/modify', MODIFY_COMMENT, {_id:tmp._id, authorKey:tmp.authorKey, modifyCommentTxt,}).then(
+            response => {
                 dispatch(response);
                 setModifyCommentTxt("");
             });
@@ -195,18 +198,17 @@ function Comment({photoInfo}:{photoInfo:IPhotoInfo | undefined}){
     useEffect(() => {
         // 서버로 부터 최근 코멘트 양식 100개만 가져옴
         if(photoInfo?._id){
-            getComment(photoInfo?._id).then(
+            callAPI('GET', 'comment/get', GET_COMMENT, {_id:photoInfo?._id}).then(
                 response => {
                     setCommentList(response.payload.result);
                     dispatch(response);
-                    console.log(commentList);
-                }
-            );
+            });
         }
-        auth().then(
+        callAPI('GET', 'users/auth', AUTH_USER).then(
             response => {
                 setUserKey(response.payload.key);
-            });
+        });
+
     }, [photoInfo?._id, commentStatus.deleteComment, commentStatus.modifyComment]);
 
     return (

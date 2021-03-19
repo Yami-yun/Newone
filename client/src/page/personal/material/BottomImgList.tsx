@@ -5,11 +5,11 @@ import {SERVER_PATH} from 'config/path';
 import { Link, useHistory } from 'react-router-dom';
 import { faTrashAlt, faEdit } from "@fortawesome/free-regular-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { deletePhoto } from "redux/actions/photoAction";
 import { useDispatch } from "react-redux";
-import { MODIFY_PHOTO } from 'redux/actions/types';
+import { DELETE_PHOTO, MODIFY_PHOTO } from 'redux/actions/types';
 import { media } from 'component/customMediaQuery';
 import { IBottomingListProps } from 'page/personal/material/PersonalInterface';
+import { callAPI } from 'redux/actions/action';
 
 const Whole=styled.section`
     width: 1000px;
@@ -163,7 +163,7 @@ function BottomImgList({photo, isUser}:IBottomingListProps){
 
     // 이미지 삭제 아이콘 클릭시, 이미지 삭제함.
     const onPhotoDeleteHandler = (data:any) => {
-        deletePhoto(data).then(
+        callAPI("DELETE", "photo/delete", DELETE_PHOTO, data).then(
             response => {
                 if(response.payload.success){
                     dispatch(response);
